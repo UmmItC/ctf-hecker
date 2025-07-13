@@ -10,105 +10,265 @@ import { Image } from 'astro:assets';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+// Pagination settings
+const POSTS_PER_PAGE = 6;
+const initialPosts = posts.slice(0, POSTS_PER_PAGE);
+const hasMore = posts.length > POSTS_PER_PAGE;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			main {
-				width: 960px;
+			@reference "tailwindcss";
+			@keyframes cosmic-drift {
+				0%, 100% { transform: translateY(0px) rotate(0deg); }
+				50% { transform: translateY(-20px) rotate(180deg); }
 			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
+			.animate-cosmic-drift {
+				animation: cosmic-drift 20s ease-in-out infinite;
 			}
-			ul li {
-				width: calc(50% - 1rem);
+			.line-clamp-3 {
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
 			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
+			.loading-spinner {
+				border: 2px solid rgba(139, 92, 246, 0.3);
+				border-radius: 50%;
+				border-top: 2px solid #9082CE;
+				width: 20px;
+				height: 20px;
+				animation: spin 1s linear infinite;
 			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
 			}
-			ul li:first-child img {
-				width: 100%;
+			.fade-in {
+				animation: fadeIn 0.5s ease-in-out;
 			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
+			@keyframes fadeIn {
+				from { opacity: 0; transform: translateY(20px); }
+				to { opacity: 1; transform: translateY(0); }
 			}
 		</style>
 	</head>
-	<body>
+	<body class="font-sans m-0 p-0 text-left min-h-screen text-gray-200 text-base leading-relaxed overflow-x-hidden relative"
+		  style="background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%), linear-gradient(135deg, rgb(10, 8, 20) 0%, rgb(20, 15, 35) 100%);">
+		
+		<!-- leonal floating particles background -->
+		<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[1] animate-cosmic-drift"
+			 style="background: repeating-linear-gradient(45deg, transparent, transparent 80px, rgba(196, 132, 252, 0.02) 80px, rgba(196, 132, 252, 0.02) 82px), repeating-linear-gradient(-45deg, transparent, transparent 80px, rgba(236, 72, 153, 0.02) 80px, rgba(236, 72, 153, 0.02) 82px);"></div>
+		
 		<Header />
-		<main>
+		<main class="w-full max-w-6xl mx-auto px-4 py-8 relative z-[2] min-h-[calc(100vh-120px)]">
+			<!-- Page Header -->
+			<section class="text-center py-16 mb-12">
+				<h1 class="text-5xl font-extrabold mb-4 text-[#9082CE]" style="text-shadow: 0 0 30px rgba(144, 130, 206, 0.5);">
+					Blog
+				</h1>
+				<p class="text-gray-400 text-lg max-w-2xl mx-auto">
+					Thoughts, tutorials, and insights about cybersecurity, GNU/Linux, and technology.
+				</p>
+				<div class="w-24 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 mx-auto rounded-full mt-6"></div>
+			</section>
+
+			<!-- Blog Posts Grid -->
 			<section>
-				<ul>
+				<div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
+						initialPosts.map((post, index) => (
+							<article class={`group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 ${index === 0 ? 'md:col-span-2 lg:col-span-3' : ''}`}>
+								<a href={`/blog/${post.id}/`} class="block">
 									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
+										<div class="relative overflow-hidden">
+											<Image 
+												width={index === 0 ? 1200 : 600} 
+												height={index === 0 ? 400 : 300} 
+												src={post.data.heroImage} 
+												alt="" 
+												class="w-full h-48 md:h-56 object-cover transition-transform duration-300 group-hover:scale-110"
+											/>
+											<div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+										</div>
 									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
+									
+									<div class="p-6">
+										<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
+											<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+											</svg>
+											<FormattedDate date={post.data.pubDate} />
+											<span class="text-gray-500">•</span>
+											<span class="text-gray-500">3 min read</span>
+										</div>
+										
+										<h2 class={`font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight ${index === 0 ? 'text-2xl md:text-3xl' : 'text-xl'}`}>
+											{post.data.title}
+										</h2>
+										
+										{post.data.description && (
+											<p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
+												{post.data.description}
+											</p>
+										)}
+										
+										<div class="flex items-center justify-end">
+											<span class="text-pink-400 text-sm font-medium group-hover:text-purple-400 transition-colors duration-300">
+												Read more →
+											</span>
+										</div>
+									</div>
+									
+									<!-- Hover glow effect -->
+									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 								</a>
-							</li>
+							</article>
 						))
 					}
-				</ul>
+				</div>
+
+				<!-- Load More Button -->
+				{hasMore && (
+					<div class="text-center mt-16">
+						<button 
+							id="load-more-btn"
+							class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#9082CE] to-pink-400 text-white rounded-xl font-semibold transition-all duration-300 hover:from-pink-400 hover:to-purple-500 hover:scale-105 hover:shadow-[0_8px_32px_rgba(139,92,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+						>
+							<span id="load-more-text">Load More Posts</span>
+							<div id="loading-spinner" class="loading-spinner hidden"></div>
+							<svg id="load-more-icon" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+							</svg>
+						</button>
+					</div>
+				)}
 			</section>
 		</main>
 		<Footer />
+
+		<script define:vars={{ posts: posts, POSTS_PER_PAGE }}>
+			let currentPage = 1;
+			let isLoading = false;
+			
+			const loadMoreBtn = document.getElementById('load-more-btn');
+			const loadMoreText = document.getElementById('load-more-text');
+			const loadingSpinner = document.getElementById('loading-spinner');
+			const loadMoreIcon = document.getElementById('load-more-icon');
+			const postsContainer = document.getElementById('posts-container');
+
+			function formatDate(date) {
+				return new Date(date).toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'short',
+					day: 'numeric'
+				});
+			}
+
+			function createPostCard(post, index) {
+				const isFirst = index === 0;
+				return `
+					<article class="group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
+						<a href="/blog/${post.id}/" class="block">
+							${post.data.heroImage ? `
+								<div class="relative overflow-hidden">
+									<img 
+										width="${isFirst ? 1200 : 600}" 
+										height="${isFirst ? 400 : 300}" 
+										src="${post.data.heroImage.src}" 
+										alt="" 
+										class="w-full h-48 md:h-56 object-cover transition-transform duration-300 group-hover:scale-110"
+									/>
+									<div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+								</div>
+							` : ''}
+							
+							<div class="p-6">
+								<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
+									<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+									</svg>
+									<span>${formatDate(post.data.pubDate)}</span>
+									<span class="text-gray-500">•</span>
+									<span class="text-gray-500">3 min read</span>
+								</div>
+								
+								<h2 class="font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight text-xl">
+									${post.data.title}
+								</h2>
+								
+								${post.data.description ? `
+									<p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
+										${post.data.description}
+									</p>
+								` : ''}
+								
+								<div class="flex items-center justify-end">
+									<span class="text-pink-400 text-sm font-medium group-hover:text-purple-400 transition-colors duration-300">
+										Read more →
+									</span>
+								</div>
+							</div>
+							
+							<!-- Hover glow effect -->
+							<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+						</a>
+					</article>
+				`;
+			}
+
+			function loadMorePosts() {
+				if (isLoading) return;
+				
+				isLoading = true;
+				loadMoreBtn.disabled = true;
+				loadMoreText.textContent = 'Loading...';
+				loadingSpinner.classList.remove('hidden');
+				loadMoreIcon.classList.add('hidden');
+
+				// Simulate loading delay for better UX
+				setTimeout(() => {
+					const startIndex = currentPage * POSTS_PER_PAGE;
+					const endIndex = startIndex + POSTS_PER_PAGE;
+					const newPosts = posts.slice(startIndex, endIndex);
+
+					newPosts.forEach((post, index) => {
+						const postCard = createPostCard(post, startIndex + index);
+						postsContainer.insertAdjacentHTML('beforeend', postCard);
+					});
+
+					currentPage++;
+					isLoading = false;
+					loadMoreBtn.disabled = false;
+					loadMoreText.textContent = 'Load More Posts';
+					loadingSpinner.classList.add('hidden');
+					loadMoreIcon.classList.remove('hidden');
+
+					// Hide button if no more posts
+					if (endIndex >= posts.length) {
+						loadMoreBtn.style.display = 'none';
+					}
+				}, 800);
+			}
+
+			// Add event listener
+			if (loadMoreBtn) {
+				loadMoreBtn.addEventListener('click', loadMorePosts);
+			}
+
+			// Auto-load on scroll (infinite scroll)
+			window.addEventListener('scroll', () => {
+				if (isLoading) return;
+				
+				const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+				if (scrollTop + clientHeight >= scrollHeight - 800) {
+					loadMorePosts();
+				}
+			});
+		</script>
 	</body>
 </html>
