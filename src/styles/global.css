@@ -1,4 +1,3 @@
-/* Anime Purple Theme - Tailwind CSS v4 */
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
@@ -14,41 +13,4 @@
 	code, pre {
 		font-family: 'Fira Code', monospace;
 	}
-}
-
-/* Custom animations */
-@keyframes magical-shimmer {
-	0%, 100% { background-position: 0% 50%; }
-	50% { background-position: 100% 50%; }
-}
-
-@keyframes twinkle {
-	0%, 100% { opacity: 1; transform: scale(1); }
-	50% { opacity: 0.7; transform: scale(1.1); }
-}
-
-@keyframes cosmic-drift {
-	0% { transform: translateX(0) translateY(0); }
-	100% { transform: translateX(-100px) translateY(-100px); }
-}
-
-@keyframes cursor-pulse {
-	0%, 50% { opacity: 1; }
-	51%, 100% { opacity: 0; }
-}
-
-.animate-magical-shimmer {
-	animation: magical-shimmer 3s ease-in-out infinite;
-}
-
-.animate-twinkle {
-	animation: twinkle 2s ease-in-out infinite;
-}
-
-.animate-cosmic-drift {
-	animation: cosmic-drift 60s linear infinite;
-}
-
-.animate-cursor-pulse {
-	animation: cursor-pulse 1s infinite;
 }
