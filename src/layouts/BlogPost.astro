@@ -15,6 +15,46 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<BaseHead title={title} description={description} />
 		<style>
 			@reference "tailwindcss";
+			
+			/* Page load fade-in animation */
+			body {
+				opacity: 0;
+				animation: pageLoad 0.3s ease-out forwards;
+			}
+			
+			@keyframes pageLoad {
+				0% { 
+					opacity: 0; 
+					transform: translateY(15px);
+				}
+				100% { 
+					opacity: 1; 
+					transform: translateY(0);
+				}
+			}
+			
+			/* Staggered animations for blog post elements */
+			.blog-hero {
+				opacity: 0;
+				animation: slideInUp 0.3s ease-out 0.05s forwards;
+			}
+			
+			.blog-content {
+				opacity: 0;
+				animation: slideInUp 0.3s ease-out 0.1s forwards;
+			}
+			
+			@keyframes slideInUp {
+				0% { 
+					opacity: 0; 
+					transform: translateY(20px);
+				}
+				100% { 
+					opacity: 1; 
+					transform: translateY(0);
+				}
+			}
+			
 			/* Custom cosmic theme styles for prose content */
 			.prose-content :global(h1) {
 				@apply text-3xl font-bold text-[#9082CE] mt-12 mb-6 pb-2 border-b-2 border-[rgba(144,130,206,0.3)];
@@ -113,10 +153,10 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Header />
 		<main class="w-full max-w-6xl mx-auto px-4 py-8 relative z-[2] min-h-[calc(100vh-120px)]">
 			<article>
-				<div class="w-full mb-8">
+				<div class="blog-hero w-full mb-8">
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" class="block mx-auto rounded-xl shadow-[0_8px_32px_rgba(139,92,246,0.15)] border border-[rgba(144,130,206,0.2)]" />}
 				</div>
-				<div class="prose max-w-4xl mx-auto p-8 text-gray-200 bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-[rgba(144,130,206,0.2)] shadow-[0_8px_32px_rgba(139,92,246,0.1)]">
+				<div class="blog-content prose max-w-4xl mx-auto p-8 text-gray-200 bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-[rgba(144,130,206,0.2)] shadow-[0_8px_32px_rgba(139,92,246,0.1)]">
 					<div class="mb-12 pb-8 text-center leading-tight border-b border-[rgba(144,130,206,0.2)]">
 						<div class="mb-6 flex flex-col items-center gap-2">
 							<div class="flex items-center gap-4 text-gray-400 text-sm font-mono">

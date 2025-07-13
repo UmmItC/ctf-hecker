@@ -55,6 +55,58 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 				from { opacity: 0; transform: translateY(20px); }
 				to { opacity: 1; transform: translateY(0); }
 			}
+			
+			/* Page load fade-in animation */
+			body {
+				opacity: 0;
+				animation: pageLoad 0.3s ease-out forwards;
+			}
+			
+			@keyframes pageLoad {
+				0% { 
+					opacity: 0; 
+					transform: translateY(15px);
+				}
+				100% { 
+					opacity: 1; 
+					transform: translateY(0);
+				}
+			}
+			
+			/* Staggered animations for different sections */
+			.page-header {
+				opacity: 0;
+				animation: slideInUp 0.3s ease-out 0.05s forwards;
+			}
+			
+			.posts-grid {
+				opacity: 0;
+				animation: slideInUp 0.3s ease-out 0.1s forwards;
+			}
+			
+			.post-card {
+				opacity: 0;
+				animation: slideInUp 0.25s ease-out forwards;
+			}
+			
+			.post-card:nth-child(1) { animation-delay: 0.15s; }
+			.post-card:nth-child(2) { animation-delay: 0.2s; }
+			.post-card:nth-child(3) { animation-delay: 0.25s; }
+			.post-card:nth-child(4) { animation-delay: 0.3s; }
+			.post-card:nth-child(5) { animation-delay: 0.35s; }
+			.post-card:nth-child(6) { animation-delay: 0.4s; }
+			.post-card:nth-child(n+7) { animation-delay: 0.45s; }
+			
+			@keyframes slideInUp {
+				0% { 
+					opacity: 0; 
+					transform: translateY(20px);
+				}
+				100% { 
+					opacity: 1; 
+					transform: translateY(0);
+				}
+			}
 		</style>
 	</head>
 	<body class="font-sans m-0 p-0 text-left min-h-screen text-gray-200 text-base leading-relaxed overflow-x-hidden relative"
@@ -67,7 +119,7 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 		<Header />
 		<main class="w-full max-w-6xl mx-auto px-4 py-8 relative z-[2] min-h-[calc(100vh-120px)]">
 			<!-- Page Header -->
-			<section class="text-center py-16 mb-12">
+			<section class="page-header text-center py-16 mb-12">
 				<h1 class="text-5xl font-extrabold mb-4 text-[#9082CE]" style="text-shadow: 0 0 30px rgba(144, 130, 206, 0.5);">
 					Blog
 				</h1>
@@ -78,11 +130,11 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 			</section>
 
 			<!-- Blog Posts Grid -->
-			<section>
+			<section class="posts-grid">
 				<div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 					{
 						initialPosts.map((post, index) => (
-							<article class={`group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 ${index === 0 ? 'md:col-span-2 lg:col-span-3' : ''}`}>
+							<article class={`post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 ${index === 0 ? 'md:col-span-2 lg:col-span-3' : ''}`}>
 								<a href={`/blog/${post.id}/`} class="block">
 									{post.data.heroImage && (
 										<div class="relative overflow-hidden">
@@ -172,7 +224,7 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 			function createPostCard(post, index) {
 				const isFirst = index === 0;
 				return `
-					<article class="group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
+					<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
 						<a href="/blog/${post.id}/" class="block">
 							${post.data.heroImage ? `
 								<div class="relative overflow-hidden">

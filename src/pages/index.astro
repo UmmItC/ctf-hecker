@@ -9,6 +9,48 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 <html lang="en" class="scroll-smooth">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			@reference "tailwindcss";
+			
+			/* Page load fade-in animation */
+			body {
+				opacity: 0;
+				animation: pageLoad 0.3s ease-out forwards;
+			}
+			
+			@keyframes pageLoad {
+				0% { 
+					opacity: 0; 
+					transform: translateY(15px);
+				}
+				100% { 
+					opacity: 1; 
+					transform: translateY(0);
+				}
+			}
+			
+			/* Staggered animations for home page elements */
+			.hero-section {
+				opacity: 0;
+				animation: slideInUp 0.3s ease-out 0.05s forwards;
+			}
+			
+			.terminal-section {
+				opacity: 0;
+				animation: slideInUp 0.3s ease-out 0.1s forwards;
+			}
+			
+			@keyframes slideInUp {
+				0% { 
+					opacity: 0; 
+					transform: translateY(20px);
+				}
+				100% { 
+					opacity: 1; 
+					transform: translateY(0);
+				}
+			}
+		</style>
 	</head>
 	<body class="font-sans m-0 p-0 text-left min-h-screen text-gray-200 text-base leading-relaxed overflow-x-hidden relative"
 		  style="background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%), linear-gradient(135deg, rgb(10, 8, 20) 0%, rgb(20, 15, 35) 100%);">
@@ -20,7 +62,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		<Header />
 		<main class="w-full max-w-6xl mx-auto px-4 py-8 relative z-[2] min-h-[calc(100vh-120px)]">
 			<!-- Hero Section -->
-			<section class="text-center py-16 pb-24 mb-12 relative">
+			<section class="hero-section text-center py-16 pb-24 mb-12 relative">
 				<h1 class="text-5xl font-extrabold mb-2 text-transparent bg-clip-text relative">
 					<span class="animate-twinkle" style="color: #9082CE;">I'm UmmIt</span>
 				</h1>
@@ -35,7 +77,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			</section>
 
 			<!-- Terminal -->
-			<div class="terminal-container my-12 relative">
+			<div class="terminal-section terminal-container my-12 relative">
 				<div class="bg-slate-900/90 backdrop-blur-xl rounded-xl p-0 overflow-hidden relative z-10"
 					 style="box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);">
 					<!-- Terminal top gradient -->
