@@ -127,7 +127,7 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 				<div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 					{
 						initialPosts.map((post, index) => (
-							<article class={`post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 ${index === 0 ? 'md:col-span-2 lg:col-span-3' : ''}`}>
+							<article class={`post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 ${index === 0 ? 'md:col-span-2 lg:col-span-3' : ''}`}>
 								<a href={`/blog/${post.id}/`} class="block">
 									{post.data.heroImage && (
 										<div class="relative overflow-hidden">
@@ -217,7 +217,7 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 			function createPostCard(post, index) {
 				const isFirst = index === 0;
 				return `
-					<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:border-purple-400/50 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
+					<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
 						<a href="/blog/${post.id}/" class="block">
 							${post.data.heroImage ? `
 								<div class="relative overflow-hidden">
@@ -280,7 +280,7 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 					const startIndex = currentPage * POSTS_PER_PAGE;
 					const endIndex = startIndex + POSTS_PER_PAGE;
 					const newPosts = posts.slice(startIndex, endIndex);
-
+					
 					newPosts.forEach((post, index) => {
 						const postCard = createPostCard(post, startIndex + index);
 						postsContainer.insertAdjacentHTML('beforeend', postCard);
