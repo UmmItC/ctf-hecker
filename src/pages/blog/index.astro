@@ -23,13 +23,6 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			@reference "tailwindcss";
-			@keyframes cosmic-drift {
-				0%, 100% { transform: translateY(0px) rotate(0deg); }
-				50% { transform: translateY(-20px) rotate(180deg); }
-			}
-			.animate-cosmic-drift {
-				animation: cosmic-drift 20s ease-in-out infinite;
-			}
 			.line-clamp-3 {
 				display: -webkit-box;
 				-webkit-line-clamp: 3;
@@ -113,7 +106,7 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 		  style="background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%), linear-gradient(135deg, rgb(10, 8, 20) 0%, rgb(20, 15, 35) 100%);">
 		
 		<!-- leonal floating particles background -->
-		<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[1] animate-cosmic-drift"
+		<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[1] "
 			 style="background: repeating-linear-gradient(45deg, transparent, transparent 80px, rgba(196, 132, 252, 0.02) 80px, rgba(196, 132, 252, 0.02) 82px), repeating-linear-gradient(-45deg, transparent, transparent 80px, rgba(236, 72, 153, 0.02) 80px, rgba(236, 72, 153, 0.02) 82px);"></div>
 		
 		<Header />
