@@ -57,24 +57,24 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			
 			/* Custom cosmic theme styles for prose content */
 			.prose-content :global(h1) {
-				@apply text-3xl font-bold text-[#9082CE] mt-12 mb-6 pb-2 border-b-2 border-[rgba(144,130,206,0.3)];
+				@apply text-3xl font-bold text-[#9082CE] mt-12 mb-6 pb-2 border-b-2 border-purple-400/30;
 				text-shadow: 0 0 20px rgba(144, 130, 206, 0.5);
 			}
 			
 			.prose-content :global(h2) {
-				@apply text-2xl font-semibold text-[#9082CE] mt-10 mb-5 pb-2 border-b border-[rgba(144,130,206,0.2)];
+				@apply text-2xl font-semibold text-[#9082CE] mt-10 mb-5 pb-2 border-b border-purple-400/20;
 			}
 			
 			.prose-content :global(h3) {
-				@apply text-xl font-semibold text-pink-400 mt-8 mb-4;
+				@apply text-xl font-semibold text-purple-400 mt-8 mb-4;
 			}
 			
 			.prose-content :global(h4) {
-				@apply text-lg font-semibold text-blue-400 mt-6 mb-3;
+				@apply text-lg font-semibold text-purple-300 mt-6 mb-3;
 			}
 			
 			.prose-content :global(h5) {
-				@apply text-base font-semibold text-green-400 mt-6 mb-3;
+				@apply text-base font-semibold text-purple-300 mt-6 mb-3;
 			}
 			
 			.prose-content :global(h6) {
@@ -86,38 +86,23 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			
 			.prose-content :global(code) {
-				@apply px-2 py-1 rounded-md font-mono text-sm border;
-				background: rgba(139, 92, 246, 0.15);
-				color: #c084fc;
-				border-color: rgba(139, 92, 246, 0.3);
+				@apply px-2 py-1 rounded-md font-mono text-sm border bg-purple-500/15 text-purple-300 border-purple-400/30;
 			}
 			
 			.prose-content :global(pre) {
-				@apply rounded-xl p-6 overflow-x-auto my-8 relative border;
-				background: rgba(15, 23, 42, 0.9);
-				border-color: rgba(144, 130, 206, 0.4);
+				@apply rounded-xl p-6 overflow-x-auto my-8 relative bg-slate-900/90 backdrop-blur-xl border border-purple-400/30 shadow-xl;
 			}
 			
 			.prose-content :global(pre code) {
-				@apply p-0 border-none text-sm leading-relaxed;
-				background: none;
-				color: rgb(196, 132, 252);
+				@apply p-0 border-none text-sm leading-relaxed bg-transparent text-purple-300;
 			}
 			
 			.prose-content :global(blockquote) {
-				@apply border-l-4 pl-6 py-4 my-8 italic rounded-r-xl;
-				border-color: #9082CE;
-				background: rgba(144, 130, 206, 0.08);
+				@apply border-l-4 border-[#9082CE] pl-6 py-4 my-8 italic rounded-r-xl bg-purple-400/8;
 			}
 			
 			.prose-content :global(a) {
-				@apply text-pink-400 no-underline border-b transition-all duration-200;
-				border-bottom-color: rgba(236, 72, 153, 0.3);
-			}
-			
-			.prose-content :global(a:hover) {
-				@apply text-purple-400;
-				border-bottom-color: #c084fc;
+				@apply text-purple-400 no-underline border-b border-purple-400/30 transition-all duration-200 hover:text-purple-300 hover:border-purple-300;
 			}
 			
 			.prose-content :global(ul), .prose-content :global(ol) {
@@ -129,7 +114,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			
 			.prose-content :global(strong) {
-				@apply text-pink-400 font-semibold;
+				@apply text-purple-300 font-semibold;
 			}
 			
 			.prose-content :global(em) {
@@ -137,8 +122,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			
 			.prose-content :global(hr) {
-				@apply border-none h-px my-12;
-				background: linear-gradient(90deg, transparent, rgba(144, 130, 206, 0.5), transparent);
+				@apply border-none h-px my-12 bg-gradient-to-r from-transparent via-purple-400/50 to-transparent;
 			}
 		</style>
 	</head>
