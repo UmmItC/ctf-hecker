@@ -189,8 +189,10 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 				{hasMore && (
 					<div class="text-center mt-16">
 						<button 
+							type="button"
 							id="load-more-btn"
-							class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#9082CE] to-pink-400 text-white rounded-xl font-semibold transition-all duration-300 hover:from-pink-400 hover:to-purple-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+							class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#9082CE] to-pink-400 text-white rounded-xl font-semibold transition-all duration-300 hover:from-pink-400 hover:to-purple-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+							aria-label="Load more blog posts"
 						>
 							<span id="load-more-text">Load More Posts</span>
 							<div id="loading-spinner" class="loading-spinner hidden"></div>
@@ -283,7 +285,6 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 				loadingSpinner.classList.remove('hidden');
 				loadMoreIcon.classList.add('hidden');
 
-				// Simulate loading delay for better UX
 				setTimeout(() => {
 					const startIndex = currentPage * POSTS_PER_PAGE;
 					const endIndex = startIndex + POSTS_PER_PAGE;
@@ -308,20 +309,51 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 				}, 800);
 			}
 
-			// Add event listener
 			if (loadMoreBtn) {
-				loadMoreBtn.addEventListener('click', loadMorePosts);
+				// Primary click handler
+				loadMoreBtn.addEventListener('click', function(event) {
+					event.preventDefault();
+					event.stopPropagation();
+					loadMorePosts();
+				});
+
+				// Keyboard accessibility (Enter and Space)
+				loadMoreBtn.addEventListener('keydown', function(event) {
+					if (event.key === 'Enter' || event.key === ' ') {
+						event.preventDefault();
+						event.stopPropagation();
+						loadMorePosts();
+					}
+				});
+
+				// Touch support for mobile
+				loadMoreBtn.addEventListener('touchstart', function(event) {
+					event.preventDefault();
+				});
+
+				loadMoreBtn.addEventListener('touchend', function(event) {
+					event.preventDefault();
+					event.stopPropagation();
+					loadMorePosts();
+				});
 			}
 
-			// Auto-load on scroll (infinite scroll)
-			window.addEventListener('scroll', () => {
-				if (isLoading) return;
-				
-				const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-				if (scrollTop + clientHeight >= scrollHeight - 800) {
-					loadMorePosts();
-				}
-			});
+			let scrollTimeout;
+			window.addEventListener('scroll', function() {
+				clearTimeout(scrollTimeout);
+				scrollTimeout = setTimeout(function() {
+					if (isLoading) return;
+					
+					try {
+						const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+						if (scrollTop + clientHeight >= scrollHeight - 800) {
+							loadMorePosts();
+						}
+					} catch (error) {
+						console.warn('Scroll handler error:', error);
+					}
+				}, 100);
+			}, { passive: true });
 		</script>
 	</body>
 </html>
