@@ -33,10 +33,14 @@ import { SITE_TITLE } from '../consts';
 			
 			<!-- Mobile Menu Button -->
 			<button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-slate-800/50 transition-colors duration-200" title="Menu">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+				<svg id="hamburger-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
 					<line x1="4" x2="20" y1="12" y2="12"/>
 					<line x1="4" x2="20" y1="6" y2="6"/>
 					<line x1="4" x2="20" y1="18" y2="18"/>
+				</svg>
+				<svg id="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400 hidden">
+					<line x1="18" y1="6" x2="6" y2="18" />
+					<line x1="6" y1="6" x2="18" y2="18" />
 				</svg>
 			</button>
 		</div>
@@ -46,36 +50,60 @@ import { SITE_TITLE } from '../consts';
 	<div id="mobile-menu" class="md:hidden hidden backdrop-blur-2xl border-t border-slate-700/40" style="background: rgba(15, 23, 42, 0.2); backdrop-filter: blur(20px);">
 		<div class="px-6 py-4 space-y-2">
 			<a href="/" class="block py-2 text-gray-300 hover:text-gray-100 transition-colors duration-200">Home</a>
+			<a href="/blog" class="block py-2 text-gray-300 hover:text-gray-100 transition-colors duration-200">Blog</a>
 			<a href="/about" class="block py-2 text-gray-300 hover:text-gray-100 transition-colors duration-200">About</a>
 		</div>
 	</div>
 </header>
 
 <script>
-	// Mobile menu toggle functionality
-	const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-	const mobileMenu = document.getElementById('mobile-menu');
-	
-	if (mobileMenuBtn && mobileMenu) {
-		mobileMenuBtn.addEventListener('click', () => {
-			mobileMenu.classList.toggle('hidden');
-		});
-		
-		// Close mobile menu when clicking outside
-		document.addEventListener('click', (e) => {
-			const target = e.target as HTMLElement;
-			if (!mobileMenuBtn.contains(target) && !mobileMenu.contains(target)) {
-				mobileMenu.classList.add('hidden');
-			}
-		});
-		
-		// Close mobile menu when window is resized to desktop
-		window.addEventListener('resize', () => {
-			if (window.innerWidth >= 768) {
-				mobileMenu.classList.add('hidden');
-			}
-		});
-	}
+  function initMobileMenu() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon')!;
+    const closeIcon = document.getElementById('close-icon')!;
+    
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        const isMenuHidden = mobileMenu.classList.contains('hidden');
+        hamburgerIcon.classList.toggle('hidden', !isMenuHidden);
+        closeIcon.classList.toggle('hidden', isMenuHidden);
+      });
+      
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (!mobileMenuBtn.contains(target) && !mobileMenu.contains(target)) {
+          mobileMenu.classList.add('hidden');
+          hamburgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        }
+      });
+      
+      // Close mobile menu when window is resized to desktop
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+          mobileMenu.classList.add('hidden');
+          hamburgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        }
+      });
+      
+      // Close mobile menu on link click
+      const mobileLinks = mobileMenu.querySelectorAll('a');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+          hamburgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        });
+      });
+    }
+  }
+  
+  initMobileMenu();
+  document.addEventListener('astro:page-load', initMobileMenu);
 </script>
 
 <style>
