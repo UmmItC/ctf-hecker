@@ -7,13 +7,35 @@ const today = new Date();
 	<!-- Top glow line -->
 	<div class="absolute top-0 left-0 right-0 h-px bg-purple-500" style="box-shadow: 0 0 10px #8b5cf6;"></div>
 	
-	<div class="max-w-6xl mx-auto flex flex-col gap-6">
+	<div class="max-w-6xl mx-auto flex flex-col items-center gap-6">
 		<div class="text-sm text-purple-300" style="text-shadow: 0 0 3px rgba(139, 92, 246, 0.3);">
 			&copy; {today.getFullYear()} UmmIt
 		</div>
 
+		<!-- GitHub Links -->
+		<div class="flex items-center justify-center gap-6 text-gray-400">
+			<a href="https://github.com/UmmItC/ctf-hecker" 
+			   target="_blank" 
+			   rel="noopener noreferrer"
+			   class="flex items-center gap-2 hover:text-purple-400 transition-colors duration-300 text-sm">
+				<iconify-icon icon="mdi:github" width="20" height="20"></iconify-icon>
+				<span>Source Code</span>
+			</a>
+			<span class="text-gray-600">•</span>
+			<a href="https://github.com/withastro/astro" 
+			   target="_blank" 
+			   rel="noopener noreferrer"
+			   class="flex items-center gap-2 hover:text-purple-400 transition-colors duration-300 text-sm">
+				<iconify-icon icon="simple-icons:astro" width="20" height="20"></iconify-icon>
+				<span>with Astro</span>
+			</a>
+		</div>
 	</div>
 </footer>
+
+<script>
+	import 'iconify-icon';
+</script>
 
 <!-- Responsive styles for mobile -->
 <style>
