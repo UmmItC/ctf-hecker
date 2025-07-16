@@ -7,7 +7,18 @@ const today = new Date();
 	<!-- Top glow line -->
 	<div class="absolute top-0 left-0 right-0 h-px bg-purple-500" style="box-shadow: 0 0 10px #8b5cf6;"></div>
 	
-	<div class="max-w-6xl mx-auto flex flex-col items-center gap-6">
+	<div class="max-w-6xl mx-auto flex flex-col items-center gap-8">
+		<!-- Uptime Counter -->
+		<div class="text-center space-y-3 bg-purple-900/20 backdrop-blur-sm rounded-xl p-6">
+			<div class="text-sm text-purple-400 font-mono uppercase tracking-wider flex items-center justify-center gap-2">
+				<iconify-icon icon="hugeicons:status" style="color: #8b5cf6;" width="20" height="20" class="animate-spin-slow"></iconify-icon>
+				<span>Blog Running Time</span>
+			</div>
+			<div id="uptime-counter" class="text-2xl font-bold text-purple-300 font-mono tracking-wider" style="text-shadow: 0 0 15px rgba(139, 92, 246, 0.7);">
+				Loading...
+			</div>
+		</div>
+		
 		<div class="text-sm text-purple-300" style="text-shadow: 0 0 3px rgba(139, 92, 246, 0.3);">
 			&copy; {today.getFullYear()} UmmIt
 		</div>
@@ -35,6 +46,35 @@ const today = new Date();
 
 <script>
 	import 'iconify-icon';
+	
+	// Uptime counter functionality
+	function initUptimeCounter() {
+		// Site launch date (change this to your actual launch date)
+		const launchDate = new Date('2025-07-14T01:27:00+08:00');
+		const uptimeElement = document.getElementById('uptime-counter');
+		
+		function updateUptime() {
+			const now = Date.now();
+			const uptime = now - launchDate.getTime();
+			
+			const days = Math.floor(uptime / (1000 * 60 * 60 * 24));
+			const hours = Math.floor((uptime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			const minutes = Math.floor((uptime % (1000 * 60 * 60)) / (1000 * 60));
+			const seconds = Math.floor((uptime % (1000 * 60)) / 1000);
+			
+			if (uptimeElement) {
+				uptimeElement.textContent = `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+			}
+		}
+		
+		// Update immediately and then every second
+		updateUptime();
+		setInterval(updateUptime, 1000);
+	}
+	
+	// Initialize on page load
+	document.addEventListener('DOMContentLoaded', initUptimeCounter);
+	document.addEventListener('astro:page-load', initUptimeCounter);
 </script>
 
 <!-- Responsive styles for mobile -->
@@ -43,5 +83,19 @@ const today = new Date();
 		footer {
 			padding: 2rem 1rem;
 		}
+	}
+	
+	/* Slow spin animation */
+	@keyframes spin-slow {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	
+	.animate-spin-slow {
+		animation: spin-slow 3s linear infinite;
 	}
 </style>
