@@ -5,7 +5,7 @@ pubDate: 'Jul 15 2025'
 author: 
   - name: 'UmmIt'
     avatar: '@https://avatars.githubusercontent.com/u/128139875?v=4'
-  - name: 'Another me'
+  - name: 'Leon dude'
     avatar: 'AM'
 ---
 
