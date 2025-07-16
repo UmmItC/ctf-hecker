@@ -3,11 +3,12 @@ import HeaderLink from './HeaderLink.astro';
 import { SITE_TITLE } from '../consts';
 ---
 
-<header class="sticky top-0 z-[1000] backdrop-blur-2xl border-b border-slate-700/40" style="background: rgba(15, 23, 42, 0.15); backdrop-filter: blur(20px);">
-	<nav class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<header id="header" class="sticky top-0 z-[1000] mt-8">
+	<div class="absolute opacity-0 inset-x-0 top-0 h-full backdrop-blur-2xl shadow-2xl transition-opacity duration-300" style="background: rgba(0, 0, 0, 0.1);"></div>
+	<nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
 		<!-- Logo/Brand -->
 		<a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200">
-			<h1 class="text-xl font-semibold text-gray-200">UmmIt :D</h1>
+			<h1 class="text-xl font-semibold text-gray-200">UmmIt</h1>
 		</a>
 		
 		<!-- Navigation Links -->
@@ -16,26 +17,44 @@ import { SITE_TITLE } from '../consts';
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
 		
-		<!-- Search Bar -->
-		<div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 min-w-[200px]">
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
-				<circle cx="11" cy="11" r="8"/>
-				<path d="m21 21-4.35-4.35"/>
-			</svg>
-			<input 
-				type="text" 
-				placeholder="Search" 
-				class="bg-transparent text-gray-300 placeholder-gray-500 text-sm w-full outline-none"
-			/>
+		<!-- Search Icon -->
+		<div class="flex items-center">
+			<button class="p-2 rounded-lg hover:bg-slate-800/50 transition-colors duration-200">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+					<circle cx="11" cy="11" r="8"/>
+					<path d="m21 21-4.35-4.35"/>
+				</svg>
+			</button>
 		</div>
 	</nav>
 </header>
 
-<style>
-	input::-webkit-scrollbar {
-		display: none;
+<script>
+	function handleScroll() {
+		const header = document.getElementById('header');
+		const blurBg = header?.querySelector('.backdrop-blur-2xl');
+		if (!blurBg) return;
+		
+		if (window.scrollY > 50) {
+			blurBg.classList.remove('opacity-0');
+			blurBg.classList.add('opacity-100');
+		} else {
+			blurBg.classList.remove('opacity-100');
+			blurBg.classList.add('opacity-0');
+		}
 	}
+
+	document.addEventListener('scroll', handleScroll);
+	document.addEventListener('astro:page-load', () => {
+		document.addEventListener('scroll', handleScroll);
+		handleScroll();
+	});
 	
+	// Initial call on page load
+	document.addEventListener('DOMContentLoaded', handleScroll);
+</script>
+
+<style>
 	@media (max-width: 768px) {
 		nav {
 			padding: 0 1rem;
