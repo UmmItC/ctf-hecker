@@ -2,7 +2,29 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import AuthorAvatar from '../components/AuthorAvatar.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+// Pagination settings
+const POSTS_PER_PAGE = 6;
+const initialPosts = posts.slice(0, POSTS_PER_PAGE);
+const hasMore = posts.length > POSTS_PER_PAGE;
+
+const normalizeAuthors = (author: any) => {
+	if (!author) return [];
+	if (typeof author === 'string') return [{ name: author, avatar: undefined }];
+	if (Array.isArray(author)) {
+		return author.map((a: any) => typeof a === 'string' ? { name: a, avatar: undefined } : a);
+	}
+	return [];
+};
 ---
 
 <!doctype html>
@@ -11,6 +33,31 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			@reference "tailwindcss";
+			.line-clamp-3 {
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+			.loading-spinner {
+				border: 2px solid rgba(139, 92, 246, 0.3);
+				border-radius: 50%;
+				border-top: 2px solid #9082CE;
+				width: 20px;
+				height: 20px;
+				animation: spin 1s linear infinite;
+			}
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+			.fade-in {
+				animation: fadeIn 0.5s ease-in-out;
+			}
+			@keyframes fadeIn {
+				from { opacity: 0; transform: translateY(20px); }
+				to { opacity: 1; transform: translateY(0); }
+			}
 			
 			/* Page load fade-in animation */
 			body {
@@ -29,16 +76,29 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				}
 			}
 			
-			/* Staggered animations for home page elements */
-			.hero-section {
+			/* Staggered animations for different sections */
+			.page-header {
 				opacity: 0;
 				animation: slideInUp 0.3s ease-out 0.05s forwards;
 			}
 			
-			.terminal-section {
+			.posts-grid {
 				opacity: 0;
 				animation: slideInUp 0.3s ease-out 0.1s forwards;
 			}
+			
+			.post-card {
+				opacity: 0;
+				animation: slideInUp 0.25s ease-out forwards;
+			}
+			
+			.post-card:nth-child(1) { animation-delay: 0.15s; }
+			.post-card:nth-child(2) { animation-delay: 0.2s; }
+			.post-card:nth-child(3) { animation-delay: 0.25s; }
+			.post-card:nth-child(4) { animation-delay: 0.3s; }
+			.post-card:nth-child(5) { animation-delay: 0.35s; }
+			.post-card:nth-child(6) { animation-delay: 0.4s; }
+			.post-card:nth-child(n+7) { animation-delay: 0.45s; }
 			
 			@keyframes slideInUp {
 				0% { 
@@ -58,125 +118,269 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		<!-- Removed grid overlay div for pure background -->
 		<Header />
 		<main class="w-full max-w-6xl mx-auto px-4 py-8 relative z-[2] min-h-[calc(100vh-120px)]">
-			<!-- Hero Section -->
-			<section class="hero-section text-center py-16 pb-24 mb-12 relative">
-				<h1 class="text-5xl font-extrabold mb-2 text-transparent bg-clip-text relative">
-					<span class="animate-twinkle" style="color: #9082CE;">I'm UmmIt</span>
+			<!-- Page Header -->
+			<section class="page-header text-center py-16 mb-12">
+				<h1 class="text-5xl font-extrabold mb-4 text-[#9082CE]">
+					Blog
 				</h1>
-				<p class="text-center text-gray-400 text-base">
-					A tech nerd who loves to hack and GNU/Linux.
+				<p class="text-gray-400 text-lg max-w-2xl mx-auto">
+					Thoughts, tutorials, and insights about cybersecurity, GNU/Linux, and technology.
 				</p>
-				<div class="text-center mt-8">
-					<span class="inline-block px-4 py-2 rounded-full text-sm font-medium mx-1 font-sans transition-all duration-300 border" style="background: rgba(144, 130, 206, 0.2); border-color: #9082CE; color: #9082CE; box-shadow: 0 0 20px rgba(144, 130, 206, 0.3);">Hacking</span>
-					<span class="inline-block px-4 py-2 rounded-full text-sm font-medium mx-1 font-sans transition-all duration-300 bg-pink-500/20 border border-pink-500 text-pink-400" style="box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);">GNU/Linux</span>
-					<span class="inline-block px-4 py-2 rounded-full text-sm font-medium mx-1 font-sans transition-all duration-300 bg-blue-500/20 border border-blue-500 text-blue-400" style="box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);">Cybersecurity</span>
+				<div class="flex items-center justify-center gap-2 mt-4 mb-6">
+					<div class="px-6 py-3 backdrop-blur-xl bg-slate-900/30 rounded-full bg-gradient-to-r from-purple-700 via-purple-500 to-pink-500">
+						<span class="text-sm text-gray-200 font-mono">
+							<span class="text-white font-bold">{posts.length}</span> 
+							{posts.length === 1 ? 'article' : 'articles'} You wrote :D
+						</span>
+					</div>
 				</div>
+				<div class="w-24 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 mx-auto rounded-full"></div>
 			</section>
 
-			<!-- Terminal -->
-			<div class="terminal-section terminal-container my-12 relative">
-				<div class="bg-slate-900/90 backdrop-blur-xl rounded-xl p-0 overflow-hidden relative z-10"
-					 style="box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);">
-					<!-- Terminal top gradient -->
-					<div class="absolute top-0 left-0 right-0 h-1" style="background: linear-gradient(90deg, #c084fc, #ec4899);"></div>
-				
-				<div class="bg-purple-500/15 px-6 py-4 border-b border-purple-500/30 font-mono text-sm text-purple-400 flex items-center gap-4">
-					<span class="text-pink-400 tracking-wider" style="filter: drop-shadow(0 0 5px #c084fc);">⬤⬤⬤</span>
-					Kitty Terminal
+			<!-- Blog Posts Grid -->
+			<section class="posts-grid">
+				<div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+					{
+						initialPosts.map((post, index) => (
+							<article class={`post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 ${index === 0 ? 'md:col-span-2 lg:col-span-3' : ''}`}>
+								<a href={`/blog/${post.id}/`} class="block">
+									
+									
+									<div class="p-6">
+										<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
+											<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+											</svg>
+											<FormattedDate date={post.data.pubDate} />
+											<span class="text-gray-500">•</span>
+											<span class="text-gray-500">3 min read</span>
+										</div>
+										
+										{/* Author section */}
+										{normalizeAuthors(post.data.author).length > 0 && (
+											<div class="flex items-center gap-2 mb-3">
+												{normalizeAuthors(post.data.author).map((authorObj) => (
+													<div class="flex items-center gap-1.5">
+														<AuthorAvatar author={authorObj.name} avatar={authorObj.avatar} size="sm" />
+														<span class="text-xs text-gray-300 font-medium">{authorObj.name}</span>
+													</div>
+												))}
+											</div>
+										)}
+										
+										<h2 class={`font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight ${index === 0 ? 'text-2xl md:text-3xl' : 'text-xl'}`}>
+											{post.data.title}
+										</h2>
+										
+										{post.data.description && (
+											<p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
+												{post.data.description}
+											</p>
+										)}
+										
+										<div class="flex items-center justify-end">
+											<span class="text-pink-400 text-sm font-medium group-hover:text-purple-400 transition-colors duration-300">
+												Read more →
+											</span>
+										</div>
+									</div>
+									
+									<!-- Hover glow effect -->
+									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+								</a>
+							</article>
+						))
+					}
 				</div>
-				<div class="p-6 font-mono leading-relaxed">
-					<pre class="bg-slate-900/80 border border-purple-500 rounded-xl p-6 overflow-x-auto my-8 backdrop-blur-sm" style="box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);"><code class="text-purple-300 font-mono"><span class="text-pink-400 font-bold">❯ </span>uname
-╭──────────────────┬────────────────────────────────────────────────────────────╮
-│ kernel-name      │ Linux                                                      │
-│ nodename         │ arch                                                       │
-│ kernel-release   │ 6.15.6-zen1-1-zen                                          │
-│ kernel-version   │ #1 ZEN SMP PREEMPT_DYNAMIC Thu, 10 Jul 2025 17:10:03 +0000 │
-│ machine          │ x86_64                                                     │
-│ operating-system │ GNU/Linux                                                  │
-╰──────────────────┴────────────────────────────────────────────────────────────╯
-<span class="text-pink-400 font-bold">❯ </span>ls -la UmmIt
-total 2024
-drwxr-xr-x 2 UmmIt leon   4096 Jal 15 23:59 .
-drwxr-xr-x 3 UmmIt leon   4096 Jul 15 23:58 ..
--rw-r--r-- 1 UmmIt leon     42 Jul 15 23:59 flag
 
-<span class="text-pink-400 font-bold">❯ </span>cd UmmIt
-
-<span class="text-pink-400 font-bold">❯ </span>cat flag
- UmmIt&#123;le0n_1s_h3r3&#125; </code></pre>
-				</div>
-				</div>
-			</div>
-
-			<style>
-				.terminal-container {
-					position: relative;
-					padding: 2px;
-					border-radius: 14px;
-					background: conic-gradient(from 0deg, #c084fc, #8b5cf6, #7c3aed, #6d28d9, #c084fc);
-					animation: border-rotate 2s linear infinite;
-				}
-				
-
-			</style>
-
-			<!-- Enhanced Quote Section -->
-			<div class="relative my-16">
-				<div class="absolute inset-0 rounded-xl opacity-20" style="background: conic-gradient(from 0deg, #9082CE, rgba(144, 130, 206, 0.3), #9082CE); animation: border-rotate 8s linear infinite;"></div>
-				<blockquote class="bg-slate-900/80 backdrop-blur-xl border-l-4 rounded-xl p-8 relative z-10 text-center" style="border-color: #9082CE; box-shadow: 0 12px 40px rgba(144, 130, 206, 0.2);">
-					<div class="text-4xl mb-4 opacity-30" style="color: #9082CE;">"</div>
-					<p class="text-xl text-gray-100 font-medium mb-6 leading-relaxed">
-						Chance is created by you, not by fate. Really.
-					</p>
-					<div class="flex items-center justify-center gap-3">
-						<div class="w-12 h-0.5 rounded" style="background: linear-gradient(90deg, transparent, #9082CE);"></div>
-						<span class="text-sm font-mono tracking-wider" style="color: #9082CE;">UmmIt</span>
-						<div class="w-12 h-0.5 rounded" style="background: linear-gradient(90deg, #9082CE, transparent);"></div>
+				<!-- Load More Button -->
+				{hasMore && (
+					<div class="text-center mt-16">
+						<button 
+							type="button"
+							id="load-more-btn"
+							class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#9082CE] to-pink-400 text-white rounded-xl font-semibold transition-all duration-300 hover:from-pink-400 hover:to-purple-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+							aria-label="Load more blog posts"
+						>
+							<span id="load-more-text">Load More Posts</span>
+							<div id="loading-spinner" class="loading-spinner hidden"></div>
+							<svg id="load-more-icon" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+							</svg>
+						</button>
 					</div>
-				</blockquote>
-			</div>
-
-			<!-- Skills & Interests Grid -->
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-16">
-				<div class="group relative overflow-hidden rounded-xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 p-6 transition-all duration-300 hover:bg-slate-900/80">
-					<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-pink-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-					<h3 class="text-lg font-semibold mb-2 text-pink-400">Cybersecurity</h3>
-					<p class="text-gray-300 text-sm">Penetration testing, vulnerability assessment, and ethical hacking practices.</p>
-				</div>
-				
-				<div class="group relative overflow-hidden rounded-xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 p-6 transition-all duration-300 hover:bg-slate-900/80">
-					<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background: linear-gradient(90deg, transparent, #9082CE, transparent);"></div>
-					<h3 class="text-lg font-semibold mb-2" style="color: #9082CE;">GNU/Linux</h3>
-					<p class="text-gray-300 text-sm">System administration, shell scripting, and open-source development.</p>
-				</div>
-				
-				<div class="group relative overflow-hidden rounded-xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 p-6 transition-all duration-300 hover:bg-slate-900/80">
-					<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-					<h3 class="text-lg font-semibold mb-2 text-blue-400">Development</h3>
-					<p class="text-gray-300 text-sm">Full-stack development, automation tools, and system programming.</p>
-				</div>
-			</div>
-
-			<!-- Connect Section -->
-			<div class="text-center my-16">
-				<h2 class="text-3xl font-bold mb-6" style="color: #9082CE;">Let's Connect</h2>
-				<p class="text-gray-300 mb-8 max-w-2xl mx-auto">
-					Always interested in discussing cybersecurity, Linux, and innovative tech :D
-				</p>
-				<div class="flex justify-center gap-4">
-					<a href="/blog" class="group relative px-6 py-3 rounded-lg font-medium transition-all duration-300 overflow-hidden" style="background: rgba(144, 130, 206, 0.1); border: 1px solid #9082CE; color: #9082CE;">
-						<span class="relative z-10">Read Blog</span>
-						<div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background: rgba(144, 130, 206, 0.2);"></div>
-					</a>
-					<a href="/about" class="group relative px-6 py-3 rounded-lg font-medium transition-all duration-300 overflow-hidden bg-pink-500/10 border border-pink-500 text-pink-400">
-						<span class="relative z-10">About Me</span>
-						<div class="absolute inset-0 bg-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-					</a>
-				</div>
-			</div>
+				)}
+			</section>
 		</main>
 		<Footer />
-		
 
+		<script define:vars={{ posts: posts, POSTS_PER_PAGE }}>
+			let currentPage = 1;
+			let isLoading = false;
+			
+			const loadMoreBtn = document.getElementById('load-more-btn');
+			const loadMoreText = document.getElementById('load-more-text');
+			const loadingSpinner = document.getElementById('loading-spinner');
+			const loadMoreIcon = document.getElementById('load-more-icon');
+			const postsContainer = document.getElementById('posts-container');
+
+			function formatDate(date) {
+				return new Date(date).toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'short',
+					day: 'numeric'
+				});
+			}
+
+			function createPostCard(post, index) {
+				const isFirst = index === 0;
+				
+				const normalizeAuthors = (author) => {
+					if (!author) return [];
+					if (typeof author === 'string') return [{ name: author, avatar: undefined }];
+					if (Array.isArray(author)) {
+						return author.map(a => typeof a === 'string' ? { name: a, avatar: undefined } : a);
+					}
+					return [];
+				};
+				
+				const createAuthorHTML = (authors) => {
+					if (!authors.length) return '';
+					return `
+						<div class="flex items-center gap-2 mb-3">
+							${authors.map(authorObj => `
+								<div class="flex items-center gap-1.5">
+									<div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-xs">
+										<span>${authorObj.name.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0, 2).join('')}</span>
+									</div>
+									<span class="text-xs text-gray-300 font-medium">${authorObj.name}</span>
+								</div>
+							`).join('')}
+						</div>
+					`;
+				};
+				
+				const authors = normalizeAuthors(post.data.author);
+				
+				return `
+					<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
+						<a href="/blog/${post.id}/" class="block">
+
+							
+							<div class="p-6">
+								<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
+									<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+									</svg>
+									<span>${formatDate(post.data.pubDate)}</span>
+									<span class="text-gray-500">•</span>
+									<span class="text-gray-500">3 min read</span>
+								</div>
+								
+								${createAuthorHTML(authors)}
+								
+								<h2 class="font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight text-xl">
+									${post.data.title}
+								</h2>
+								
+								${post.data.description ? `
+									<p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
+										${post.data.description}
+									</p>
+								` : ''}
+								
+								<div class="flex items-center justify-end">
+									<span class="text-pink-400 text-sm font-medium group-hover:text-purple-400 transition-colors duration-300">
+										Read more →
+									</span>
+								</div>
+							</div>
+							
+							<!-- Hover glow effect -->
+							<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+						</a>
+					</article>
+				`;
+			}
+
+			function loadMorePosts() {
+				if (isLoading) return;
+				
+				isLoading = true;
+				loadMoreBtn.disabled = true;
+				loadMoreText.textContent = 'Loading...';
+				loadingSpinner.classList.remove('hidden');
+				loadMoreIcon.classList.add('hidden');
+
+				setTimeout(() => {
+					const startIndex = currentPage * POSTS_PER_PAGE;
+					const endIndex = startIndex + POSTS_PER_PAGE;
+					const newPosts = posts.slice(startIndex, endIndex);
+					
+					newPosts.forEach((post, index) => {
+						const postCard = createPostCard(post, startIndex + index);
+						postsContainer.insertAdjacentHTML('beforeend', postCard);
+					});
+
+					currentPage++;
+					isLoading = false;
+					loadMoreBtn.disabled = false;
+					loadMoreText.textContent = 'Load More Posts';
+					loadingSpinner.classList.add('hidden');
+					loadMoreIcon.classList.remove('hidden');
+
+					// Hide button if no more posts
+					if (endIndex >= posts.length) {
+						loadMoreBtn.style.display = 'none';
+					}
+				}, 800);
+			}
+
+			if (loadMoreBtn) {
+				// Primary click handler
+				loadMoreBtn.addEventListener('click', function(event) {
+					event.preventDefault();
+					event.stopPropagation();
+					loadMorePosts();
+				});
+
+				// Keyboard accessibility (Enter and Space)
+				loadMoreBtn.addEventListener('keydown', function(event) {
+					if (event.key === 'Enter' || event.key === ' ') {
+						event.preventDefault();
+						event.stopPropagation();
+						loadMorePosts();
+					}
+				});
+
+				// Touch support for mobile
+				loadMoreBtn.addEventListener('touchstart', function(event) {
+					event.preventDefault();
+				});
+
+				loadMoreBtn.addEventListener('touchend', function(event) {
+					event.preventDefault();
+					event.stopPropagation();
+					loadMorePosts();
+				});
+			}
+
+			let scrollTimeout;
+			window.addEventListener('scroll', function() {
+				clearTimeout(scrollTimeout);
+				scrollTimeout = setTimeout(function() {
+					if (isLoading) return;
+					
+					try {
+						const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+						if (scrollTop + clientHeight >= scrollHeight - 800) {
+							loadMorePosts();
+						}
+					} catch (error) {
+						console.warn('Scroll handler error:', error);
+					}
+				}, 100);
+			}, { passive: true });
+		</script>
 	</body>
 </html>
