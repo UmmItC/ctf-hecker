@@ -12,6 +12,15 @@ const blog = defineCollection({
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
 		heroImage: image().optional(),
+		// Author can be a string, array of strings, or array of objects with name and avatar
+		author: z.union([
+			z.string(),
+			z.array(z.string()),
+			z.array(z.object({
+				name: z.string(),
+				avatar: z.string().optional()
+			}))
+		]).optional(),
 	}),
 });
 

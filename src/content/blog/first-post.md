@@ -2,6 +2,7 @@
 title: 'Step-by-Step Guide to Install Arch Linux from Scratch (Minimal System)'
 description: 'Guide for helping people to install Arch Linux from scratch, resulting in a minimal system. Not including the installation of a desktop environment :)'
 pubDate: 'Jul 14 2025'
+author: ['UmmIt', 'Another me']
 ---
 
 ## Introduction

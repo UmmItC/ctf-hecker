@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+	author: string;
+	size?: 'sm' | 'md' | 'lg';
+	avatar?: string;
+}
+
+const { author, size = 'md', avatar } = Astro.props;
+
+const getInitials = (name: string) => {
+	return name
+		.split(' ')
+		.map(word => word.charAt(0).toUpperCase())
+		.slice(0, 2)
+		.join('');
+};
+
+const sizeClasses = {
+	sm: 'w-8 h-8 text-sm',
+	md: 'w-10 h-10 text-base',
+	lg: 'w-12 h-12 text-lg'
+};
+
+const imageDimensions = {
+	sm: { width: 128, height: 128 },
+	md: { width: 160, height: 160 },
+	lg: { width: 192, height: 192 }
+};
+
+const initials = getInitials(author);
+
+let authorImage;
+try {
+	if (avatar) {
+		authorImage = await import(`../assets/authors/${avatar}`);
+	} else {
+		const imageName = author.toLowerCase().replace(/\s+/g, '-');
+		authorImage = await import(`../assets/authors/${imageName}.png`);
+	}
+} catch (error) {
+	authorImage = null;
+}
+---
+
+<div class={`${sizeClasses[size]} rounded-full overflow-hidden shadow-lg relative`}>
+	{authorImage ? (
+		<Image 
+			src={authorImage.default} 
+			alt={`${author} avatar`} 
+			class="w-full h-full object-cover"
+			width={imageDimensions[size].width}
+			height={imageDimensions[size].height}
+			quality="high"
+			format="webp"
+		/>
+	) : (
+		<div class="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
+			<span>{initials}</span>
+		</div>
+	)}
+</div> 
