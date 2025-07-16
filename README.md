@@ -1,6 +1,6 @@
-# ctf-hecker
+# Purple
 
-A theme that for hacker.
+A theme that for hacker and people thing purple is good
 
 ## Usage
 
