@@ -2,6 +2,7 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import AuthorAvatar from '../../components/AuthorAvatar.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
@@ -15,6 +16,15 @@ const posts = (await getCollection('blog')).sort(
 const POSTS_PER_PAGE = 6;
 const initialPosts = posts.slice(0, POSTS_PER_PAGE);
 const hasMore = posts.length > POSTS_PER_PAGE;
+
+const normalizeAuthors = (author: any) => {
+	if (!author) return [];
+	if (typeof author === 'string') return [{ name: author, avatar: undefined }];
+	if (Array.isArray(author)) {
+		return author.map((a: any) => typeof a === 'string' ? { name: a, avatar: undefined } : a);
+	}
+	return [];
+};
 ---
 
 <!doctype html>
@@ -157,6 +167,18 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 											<span class="text-gray-500">3 min read</span>
 										</div>
 										
+										{/* Author section */}
+										{normalizeAuthors(post.data.author).length > 0 && (
+											<div class="flex items-center gap-2 mb-3">
+												{normalizeAuthors(post.data.author).map((authorObj) => (
+													<div class="flex items-center gap-1.5">
+														<AuthorAvatar author={authorObj.name} avatar={authorObj.avatar} size="sm" />
+														<span class="text-xs text-gray-300 font-medium">{authorObj.name}</span>
+													</div>
+												))}
+											</div>
+										)}
+										
 										<h2 class={`font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight ${index === 0 ? 'text-2xl md:text-3xl' : 'text-xl'}`}>
 											{post.data.title}
 										</h2>
@@ -223,6 +245,34 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 
 			function createPostCard(post, index) {
 				const isFirst = index === 0;
+				
+				const normalizeAuthors = (author) => {
+					if (!author) return [];
+					if (typeof author === 'string') return [{ name: author, avatar: undefined }];
+					if (Array.isArray(author)) {
+						return author.map(a => typeof a === 'string' ? { name: a, avatar: undefined } : a);
+					}
+					return [];
+				};
+				
+				const createAuthorHTML = (authors) => {
+					if (!authors.length) return '';
+					return `
+						<div class="flex items-center gap-2 mb-3">
+							${authors.map(authorObj => `
+								<div class="flex items-center gap-1.5">
+									<div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-xs">
+										<span>${authorObj.name.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0, 2).join('')}</span>
+									</div>
+									<span class="text-xs text-gray-300 font-medium">${authorObj.name}</span>
+								</div>
+							`).join('')}
+						</div>
+					`;
+				};
+				
+				const authors = normalizeAuthors(post.data.author);
+				
 				return `
 					<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
 						<a href="/blog/${post.id}/" class="block">
@@ -248,6 +298,8 @@ const hasMore = posts.length > POSTS_PER_PAGE;
 									<span class="text-gray-500">•</span>
 									<span class="text-gray-500">3 min read</span>
 								</div>
+								
+								${createAuthorHTML(authors)}
 								
 								<h2 class="font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight text-xl">
 									${post.data.title}
