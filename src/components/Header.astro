@@ -66,8 +66,12 @@ import { SITE_TITLE } from '../consts';
 
 <script>
   let cleanup: (() => void) | null = null;
+  let retryTimeout: number | null = null;
+  const MAX_RETRIES = 10;
+  let retryCount = 0;
 
   function safeInitMobileMenu() {
+    retryCount = 0;
     requestAnimationFrame(initMobileMenu);
   }
 
@@ -80,7 +84,10 @@ import { SITE_TITLE } from '../consts';
     const closeIcon = document.getElementById('close-icon');
 
     if (!mobileMenuBtn || !mobileMenu || !hamburgerIcon || !closeIcon) {
-      setTimeout(initMobileMenu, 50);
+      if (retryCount < MAX_RETRIES) {
+        retryTimeout = window.setTimeout(initMobileMenu, 50);
+        retryCount++;
+      }
       return;
     }
 
@@ -126,6 +133,10 @@ import { SITE_TITLE } from '../consts';
       mobileMenuBtn.removeEventListener('click', toggleMenu);
       menuLinks.forEach(link => link.removeEventListener('click', closeMenu));
       document.removeEventListener('click', outsideClick);
+      if (retryTimeout !== null) {
+        clearTimeout(retryTimeout);
+        retryTimeout = null;
+      }
       cleanup = null;
     };
   }
