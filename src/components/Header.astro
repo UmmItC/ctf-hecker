@@ -4,7 +4,7 @@ import { SITE_TITLE } from '../consts';
 ---
 
 <header id="header" class="sticky top-0 z-[1000] mt-8">
-	<div class="absolute opacity-0 inset-x-0 top-0 h-full backdrop-blur-2xl shadow-2xl transition-opacity duration-300 bg-black/10 supports-[backdrop-filter]:bg-black/10" style="backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);"></div>
+	<div class="absolute opacity-0 inset-x-0 top-0 h-full shadow-2xl transition-opacity duration-300 bg-black/20" style="backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); will-change: opacity;"></div>
 	<nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
 		<!-- Logo/Brand -->
 		<a href="/" class="flex items-center gap-2 hover:text-purple-400 transition-colors duration-200">
@@ -32,7 +32,7 @@ import { SITE_TITLE } from '../consts';
 <script>
 	function handleScroll() {
 		const header = document.getElementById('header');
-		const blurBg = header?.querySelector('.backdrop-blur-2xl');
+		const blurBg = header?.querySelector('div[style*="backdrop-filter"]');
 		if (!blurBg) return;
 		
 		if (window.scrollY > 50) {
@@ -53,6 +53,16 @@ import { SITE_TITLE } from '../consts';
 	// Initial call on page load
 	document.addEventListener('DOMContentLoaded', handleScroll);
 </script>
+
+<style>
+	/* Force backdrop blur to work in Chromium browsers */
+	header div[style*="backdrop-filter"] {
+		backdrop-filter: blur(32px) !important;
+		-webkit-backdrop-filter: blur(32px) !important;
+		transform: translateZ(0);
+		will-change: opacity;
+	}
+</style>
 
 <style>
 	@media (max-width: 768px) {

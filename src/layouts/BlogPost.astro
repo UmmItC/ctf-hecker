@@ -23,23 +23,46 @@ if (author) {
 	}
 }
 ---
-<html lang="en" class="scroll-smooth bg-gradient-to-br from-black to-[#51317e] min-h-screen">
+<html lang="en" class="scroll-smooth min-h-screen">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
 			@reference "tailwindcss";
 			
-			/* Ensure backdrop blur works properly in Chromium browsers */
-			.backdrop-blur-2xl {
-				backdrop-filter: blur(32px);
-				-webkit-backdrop-filter: blur(32px);
+			/* Fix scroll indicator colors and ensure proper background */
+			::-webkit-scrollbar {
+				width: 8px;
 			}
 			
-			/* Ensure full height coverage */
-			html, body {
+			::-webkit-scrollbar-track {
+				background: #000000;
+			}
+			
+			::-webkit-scrollbar-thumb {
+				background: #8b5cf6;
+				border-radius: 4px;
+			}
+			
+			::-webkit-scrollbar-thumb:hover {
+				background: #a855f7;
+			}
+			
+			/* Ensure backdrop blur works properly in Chromium browsers */
+			.backdrop-blur-2xl {
+				backdrop-filter: blur(32px) !important;
+				-webkit-backdrop-filter: blur(32px) !important;
+			}
+			
+			/* Ensure full height coverage with fixed background */
+			html {
 				min-height: 100vh;
-				background: linear-gradient(135deg, #000000 0%, #51317e 100%);
+				background: linear-gradient(135deg, #000000 0%, #51317e 100%) fixed;
 				background-attachment: fixed;
+			}
+			
+			body {
+				min-height: 100vh;
+				background: transparent;
 			}
 			
 			@keyframes pageLoad {
@@ -171,7 +194,7 @@ if (author) {
 			}
 		</style>
 	</head>
-	<body class="opacity-0 animate-[pageLoad_0.3s_ease-out_forwards] bg-gradient-to-br from-black to-[#51317e] bg-fixed min-h-screen">
+	<body class="opacity-0 animate-[pageLoad_0.3s_ease-out_forwards] min-h-screen">
 		<Header />
 		<main class="w-full max-w-4xl mx-auto px-4 py-8 min-h-[calc(100vh-120px)]">
 			<article class="opacity-0 animate-[slideInUp_0.3s_ease-out_0.05s_forwards]">
