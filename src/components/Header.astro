@@ -65,79 +65,80 @@ import { SITE_TITLE } from '../consts';
 </header>
 
 <script>
-  // Mobile menu initialization function
+  let cleanup: (() => void) | null = null;
+
+  function safeInitMobileMenu() {
+    requestAnimationFrame(initMobileMenu);
+  }
+
   function initMobileMenu() {
+    if (cleanup) cleanup();
+
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     const hamburgerIcon = document.getElementById('hamburger-icon');
     const closeIcon = document.getElementById('close-icon');
-    
-    if (mobileMenuBtn && mobileMenu && hamburgerIcon && closeIcon) {
-      // Remove any existing event listeners to prevent duplicates
-      const newBtn = mobileMenuBtn.cloneNode(true);
-      mobileMenuBtn.parentNode?.replaceChild(newBtn, mobileMenuBtn);
-      
-      // Get the new button reference
-      const btn = document.getElementById('mobile-menu-btn');
-      const menu = document.getElementById('mobile-menu');
-      const hamburger = document.getElementById('hamburger-icon');
-      const close = document.getElementById('close-icon');
-      
-      if (btn && menu && hamburger && close) {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          // Toggle menu visibility
-          if (menu.classList.contains('hidden')) {
-            // Show menu
-            menu.classList.remove('hidden');
-            hamburger.style.display = 'none';
-            close.style.display = 'block';
-          } else {
-            // Hide menu
-            menu.classList.add('hidden');
-            hamburger.style.display = 'block';
-            close.style.display = 'none';
-          }
-        });
-        
-        // Close menu when clicking on links
-        const menuLinks = menu.querySelectorAll('a');
-        menuLinks.forEach(function(link) {
-          link.addEventListener('click', function() {
-            menu.classList.add('hidden');
-            hamburger.style.display = 'block';
-            close.style.display = 'none';
-          });
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-          if (!btn.contains(e.target as Node) && !menu.contains(e.target as Node)) {
-            menu.classList.add('hidden');
-            hamburger.style.display = 'block';
-            close.style.display = 'none';
-          }
-        });
+
+    if (!mobileMenuBtn || !mobileMenu || !hamburgerIcon || !closeIcon) {
+      setTimeout(initMobileMenu, 50);
+      return;
+    }
+
+    mobileMenu.classList.add('hidden');
+    hamburgerIcon.style.display = 'block';
+    closeIcon.style.display = 'none';
+
+    function toggleMenu(e: any) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!mobileMenu || !hamburgerIcon || !closeIcon || !mobileMenuBtn) return;
+      if (mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.remove('hidden');
+        hamburgerIcon.style.display = 'none';
+        closeIcon.style.display = 'block';
+      } else {
+        mobileMenu.classList.add('hidden');
+        hamburgerIcon.style.display = 'block';
+        closeIcon.style.display = 'none';
       }
     }
+
+    function closeMenu() {
+      if (!mobileMenu || !hamburgerIcon || !closeIcon) return;
+      mobileMenu.classList.add('hidden');
+      hamburgerIcon.style.display = 'block';
+      closeIcon.style.display = 'none';
+    }
+
+    function outsideClick(e: any) {
+      if (!mobileMenuBtn || !mobileMenu) return;
+      if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+        closeMenu();
+      }
+    }
+
+    mobileMenuBtn.addEventListener('click', toggleMenu);
+    const menuLinks = mobileMenu.querySelectorAll('a');
+    menuLinks.forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('click', outsideClick);
+
+    cleanup = () => {
+      mobileMenuBtn.removeEventListener('click', toggleMenu);
+      menuLinks.forEach(link => link.removeEventListener('click', closeMenu));
+      document.removeEventListener('click', outsideClick);
+      cleanup = null;
+    };
   }
 
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', initMobileMenu);
-  
-  // Re-initialize on Astro page transitions
-  document.addEventListener('astro:page-load', initMobileMenu);
+  document.addEventListener('DOMContentLoaded', safeInitMobileMenu);
+  document.addEventListener('astro:page-load', safeInitMobileMenu);
 </script>
 
 <style>
-	/* Custom scrollbar for search */
 	input::-webkit-scrollbar {
 		display: none;
 	}
 	
-	/* Mobile responsive */
 	@media (max-width: 768px) {
 		nav {
 			padding: 0 1rem;
