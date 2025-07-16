@@ -1,6 +1,7 @@
 ---
 import HeaderLink from './HeaderLink.astro';
 import { SITE_TITLE } from '../consts';
+
 ---
 
 <header id="header" class="sticky top-0 z-[1000] mt-8">
@@ -19,17 +20,52 @@ import { SITE_TITLE } from '../consts';
 		
 		<!-- Search Icon -->
 		<div class="flex items-center">
-			<button class="p-2 rounded-lg text-gray-400 hover:text-purple-400 transition-colors duration-200">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<circle cx="11" cy="11" r="8"/>
-					<path d="m21 21-4.35-4.35"/>
-				</svg>
+			<button id="search-btn" class="p-2 rounded-lg text-gray-400 hover:text-purple-400 transition-all duration-200 hover:scale-110 active:scale-95">
+				<iconify-icon icon="ion:search-sharp" width="20" height="20" class="transition-transform duration-200"></iconify-icon>
 			</button>
 		</div>
+	</nav>
+	
+	<!-- Search Modal -->
+	<div id="search-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[2000] hidden opacity-0 transition-opacity duration-300">
+		<div class="flex items-center justify-center min-h-screen p-4">
+			<div id="search-modal-content" class="bg-slate-900/95 rounded-xl p-6 max-w-md w-full mx-auto backdrop-blur-sm transform scale-95 transition-all duration-300">
+				<div class="flex items-center justify-between mb-4">
+					<h3 class="text-lg font-semibold text-purple-300">Search</h3>
+					<button id="close-search" class="text-gray-400 hover:text-purple-400 transition-colors">
+						<iconify-icon icon="ion:close-sharp" width="20" height="20"></iconify-icon>
+					</button>
+				</div>
+				
+				<div class="space-y-4">
+					<div class="relative">
+						<input 
+							type="text" 
+							placeholder="Search articles..."
+							class="w-full bg-slate-800/50 border border-purple-500/30 rounded-lg px-4 py-3 text-gray-300 placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400"
+						/>
+						<div class="absolute right-3 top-3">
+							<iconify-icon icon="ion:search-sharp" width="20" height="20"></iconify-icon>
+						</div>
+					</div>
+					
+					<div class="text-center py-8">
+						<div class="text-purple-400 mb-4">
+							<iconify-icon icon="svg-spinners:ring-resize" width="48" height="48" class="mx-auto"></iconify-icon>
+						</div>
+						<p class="text-gray-300 font-medium mb-1">Search Currently in Development</p>
+						<p class="text-gray-500 text-sm">This feature is being actively developed and will be available soon!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	</nav>
 </header>
 
 <script>
+	import 'iconify-icon';
+	
 	function handleScroll() {
 		const header = document.getElementById('header');
 		const blurBg = header?.querySelector('div[style*="backdrop-filter"]');
@@ -48,11 +84,110 @@ import { SITE_TITLE } from '../consts';
 	document.addEventListener('astro:page-load', () => {
 		document.addEventListener('scroll', handleScroll);
 		handleScroll();
+		initSearchModal();
 	});
 	
 	// Initial call on page load
-	document.addEventListener('DOMContentLoaded', handleScroll);
+	document.addEventListener('DOMContentLoaded', () => {
+		handleScroll();
+		initSearchModal();
+	});
+	
+	// Search modal functionality
+	function initSearchModal() {
+		const searchBtn = document.getElementById('search-btn');
+		const searchModal = document.getElementById('search-modal');
+		const closeSearch = document.getElementById('close-search');
+		
+		if (!searchBtn || !searchModal || !closeSearch) return;
+		
+		// Open modal
+		searchBtn.addEventListener('click', () => {
+			const modalContent = document.getElementById('search-modal-content');
+			const searchIcon = searchBtn.querySelector('iconify-icon');
+			
+			// Animate search button click - pop effect
+			searchBtn.style.transform = 'scale(0.9)';
+			if (searchIcon) {
+				searchIcon.style.transform = 'scale(1.3)';
+			}
+			
+			setTimeout(() => {
+				searchBtn.style.transform = 'scale(1.1)';
+				if (searchIcon) {
+					searchIcon.style.transform = 'scale(1.1)';
+				}
+			}, 100);
+			
+			setTimeout(() => {
+				searchBtn.style.transform = 'scale(1)';
+				if (searchIcon) {
+					searchIcon.style.transform = 'scale(1)';
+				}
+			}, 200);
+			
+			// Show modal
+			searchModal.classList.remove('hidden');
+			
+			// Animate in
+			requestAnimationFrame(() => {
+				searchModal.classList.remove('opacity-0');
+				searchModal.classList.add('opacity-100');
+				if (modalContent) {
+					modalContent.classList.remove('scale-95');
+					modalContent.classList.add('scale-100');
+				}
+			});
+			
+			// Focus on input after animation
+			setTimeout(() => {
+				const input = searchModal.querySelector('input');
+				if (input) input.focus();
+			}, 150);
+		});
+		
+		// Close modal function
+		function closeModal() {
+			const modalContent = document.getElementById('search-modal-content');
+			
+			if (!searchModal) return;
+			
+			// Animate out
+			searchModal.classList.remove('opacity-100');
+			searchModal.classList.add('opacity-0');
+			if (modalContent) {
+				modalContent.classList.remove('scale-100');
+				modalContent.classList.add('scale-95');
+			}
+			
+			// Hide after animation
+			setTimeout(() => {
+				if (searchModal) {
+					searchModal.classList.add('hidden');
+				}
+			}, 300);
+		}
+		
+		// Close modal
+		closeSearch.addEventListener('click', closeModal);
+		
+		// Close modal on backdrop click
+		searchModal.addEventListener('click', (e) => {
+			if (e.target === searchModal) {
+				closeModal();
+			}
+		});
+		
+		// Close modal on Escape key
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && searchModal && !searchModal.classList.contains('hidden')) {
+				closeModal();
+			}
+		});
+	}
 </script>
+
+
 
 <style>
 	/* Force backdrop blur to work in Chromium browsers */
