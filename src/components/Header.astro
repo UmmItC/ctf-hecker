@@ -11,148 +11,25 @@ import { SITE_TITLE } from '../consts';
 		</a>
 		
 		<!-- Navigation Links -->
-		<div class="hidden md:flex items-center gap-8">
+		<div class="flex items-center gap-8">
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
 		
-		<!-- Search and Mobile Menu -->
-		<div class="flex items-center gap-4">
-			<!-- Search Bar -->
-			<div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 min-w-[200px]">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
-					<circle cx="11" cy="11" r="8"/>
-					<path d="m21 21-4.35-4.35"/>
-				</svg>
-				<input 
-					type="text" 
-					placeholder="Search" 
-					class="bg-transparent text-gray-300 placeholder-gray-500 text-sm w-full outline-none"
-				/>
-			</div>
-			
-			<!-- Mobile Menu Button -->
-			<button 
-				id="mobile-menu-btn" 
-				type="button"
-				class="md:hidden p-2 rounded-lg hover:bg-slate-800/50 transition-colors duration-200" 
-				title="Menu"
-				aria-label="Toggle mobile menu"
-				aria-expanded="false"
-				aria-controls="mobile-menu"
-			>
-				<svg id="hamburger-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
-					<line x1="4" x2="20" y1="12" y2="12"/>
-					<line x1="4" x2="20" y1="6" y2="6"/>
-					<line x1="4" x2="20" y1="18" y2="18"/>
-				</svg>
-				<svg id="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400" style="display: none;">
-					<line x1="18" y1="6" x2="6" y2="18" />
-					<line x1="6" y1="6" x2="18" y2="18" />
-				</svg>
-			</button>
+		<!-- Search Bar -->
+		<div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 min-w-[200px]">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+				<circle cx="11" cy="11" r="8"/>
+				<path d="m21 21-4.35-4.35"/>
+			</svg>
+			<input 
+				type="text" 
+				placeholder="Search" 
+				class="bg-transparent text-gray-300 placeholder-gray-500 text-sm w-full outline-none"
+			/>
 		</div>
 	</nav>
-	
-	<!-- Mobile Menu -->
-	<div id="mobile-menu" class="md:hidden hidden backdrop-blur-2xl border-t border-slate-700/40" style="background: rgba(15, 23, 42, 0.2); backdrop-filter: blur(20px);" role="menu">
-		<div class="px-6 py-4 space-y-2">
-			<a href="/" class="block py-2 text-gray-300 hover:text-gray-100 transition-colors duration-200" role="menuitem">Home</a>
-			<a href="/blog" class="block py-2 text-gray-300 hover:text-gray-100 transition-colors duration-200" role="menuitem">Blog</a>
-			<a href="/about" class="block py-2 text-gray-300 hover:text-gray-100 transition-colors duration-200" role="menuitem">About</a>
-		</div>
-	</div>
 </header>
-
-<script>
-  let cleanup: (() => void) | null = null;
-  let retryTimeout: number | null = null;
-  const MAX_RETRIES = 10;
-  let retryCount = 0;
-
-  function safeInitMobileMenu() {
-    // Clear any existing timeout to prevent race conditions
-    if (retryTimeout !== null) {
-      clearTimeout(retryTimeout);
-      retryTimeout = null;
-    }
-    retryCount = 0;
-    requestAnimationFrame(initMobileMenu);
-  }
-
-  function initMobileMenu() {
-    if (cleanup) cleanup();
-
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-    const closeIcon = document.getElementById('close-icon');
-
-    if (!mobileMenuBtn || !mobileMenu || !hamburgerIcon || !closeIcon) {
-      if (retryCount < MAX_RETRIES) {
-        // Clear any existing timeout before setting a new one
-        if (retryTimeout !== null) {
-          clearTimeout(retryTimeout);
-        }
-        retryTimeout = window.setTimeout(initMobileMenu, 50);
-        retryCount++;
-      }
-      return;
-    }
-
-    mobileMenu.classList.add('hidden');
-    hamburgerIcon.style.display = 'block';
-    closeIcon.style.display = 'none';
-
-    function toggleMenu(e: any) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (!mobileMenu || !hamburgerIcon || !closeIcon || !mobileMenuBtn) return;
-      if (mobileMenu.classList.contains('hidden')) {
-        mobileMenu.classList.remove('hidden');
-        hamburgerIcon.style.display = 'none';
-        closeIcon.style.display = 'block';
-      } else {
-        mobileMenu.classList.add('hidden');
-        hamburgerIcon.style.display = 'block';
-        closeIcon.style.display = 'none';
-      }
-    }
-
-    function closeMenu() {
-      if (!mobileMenu || !hamburgerIcon || !closeIcon) return;
-      mobileMenu.classList.add('hidden');
-      hamburgerIcon.style.display = 'block';
-      closeIcon.style.display = 'none';
-    }
-
-    function outsideClick(e: any) {
-      if (!mobileMenuBtn || !mobileMenu) return;
-      if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-        closeMenu();
-      }
-    }
-
-    mobileMenuBtn.addEventListener('click', toggleMenu);
-    const menuLinks = mobileMenu.querySelectorAll('a');
-    menuLinks.forEach(link => link.addEventListener('click', closeMenu));
-    document.addEventListener('click', outsideClick);
-
-    cleanup = () => {
-      mobileMenuBtn.removeEventListener('click', toggleMenu);
-      menuLinks.forEach(link => link.removeEventListener('click', closeMenu));
-      document.removeEventListener('click', outsideClick);
-      if (retryTimeout !== null) {
-        clearTimeout(retryTimeout);
-        retryTimeout = null;
-      }
-      cleanup = null;
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded', safeInitMobileMenu);
-  document.addEventListener('astro:page-load', safeInitMobileMenu);
-</script>
 
 <style>
 	input::-webkit-scrollbar {
