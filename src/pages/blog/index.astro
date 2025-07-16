@@ -6,7 +6,7 @@ import AuthorAvatar from '../../components/AuthorAvatar.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
-import { Image } from 'astro:assets';
+
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -144,18 +144,7 @@ const normalizeAuthors = (author: any) => {
 						initialPosts.map((post, index) => (
 							<article class={`post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 ${index === 0 ? 'md:col-span-2 lg:col-span-3' : ''}`}>
 								<a href={`/blog/${post.id}/`} class="block">
-									{post.data.heroImage && (
-										<div class="relative overflow-hidden">
-											<Image 
-												width={index === 0 ? 1200 : 600} 
-												height={index === 0 ? 400 : 300} 
-												src={post.data.heroImage} 
-												alt="" 
-												class="w-full h-48 md:h-56 object-cover transition-transform duration-300 group-hover:scale-110"
-											/>
-											<div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-										</div>
-									)}
+									
 									
 									<div class="p-6">
 										<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
@@ -276,18 +265,7 @@ const normalizeAuthors = (author: any) => {
 				return `
 					<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
 						<a href="/blog/${post.id}/" class="block">
-							${post.data.heroImage ? `
-								<div class="relative overflow-hidden">
-									<img 
-										width="${isFirst ? 1200 : 600}" 
-										height="${isFirst ? 400 : 300}" 
-										src="${post.data.heroImage.src}" 
-										alt="" 
-										class="w-full h-48 md:h-56 object-cover transition-transform duration-300 group-hover:scale-110"
-									/>
-									<div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-								</div>
-							` : ''}
+
 							
 							<div class="p-6">
 								<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">

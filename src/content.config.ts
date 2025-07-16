@@ -11,7 +11,6 @@ const blog = defineCollection({
 		// Transform string to Date object
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
-		heroImage: image().optional(),
 		// Author can be a string, array of strings, or array of objects with name and avatar
 		// Avatar can be:
 		// - Local file: "avatar.png" (looks in src/assets/authors/)

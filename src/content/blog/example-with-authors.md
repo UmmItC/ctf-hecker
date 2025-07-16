@@ -2,7 +2,6 @@
 title: 'Example Post with Authors'
 description: 'This is an example post showing how to use the author system'
 pubDate: 'Jul 15 2025'
-heroImage: '../../assets/blog-placeholder-1.jpg'
 author: 
   - name: 'UmmIt'
     avatar: '@https://avatars.githubusercontent.com/u/128139875?v=4'
