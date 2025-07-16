@@ -71,6 +71,11 @@ import { SITE_TITLE } from '../consts';
   let retryCount = 0;
 
   function safeInitMobileMenu() {
+    // Clear any existing timeout to prevent race conditions
+    if (retryTimeout !== null) {
+      clearTimeout(retryTimeout);
+      retryTimeout = null;
+    }
     retryCount = 0;
     requestAnimationFrame(initMobileMenu);
   }
@@ -85,6 +90,10 @@ import { SITE_TITLE } from '../consts';
 
     if (!mobileMenuBtn || !mobileMenu || !hamburgerIcon || !closeIcon) {
       if (retryCount < MAX_RETRIES) {
+        // Clear any existing timeout before setting a new one
+        if (retryTimeout !== null) {
+          clearTimeout(retryTimeout);
+        }
         retryTimeout = window.setTimeout(initMobileMenu, 50);
         retryCount++;
       }
