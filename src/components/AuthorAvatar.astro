@@ -31,21 +31,38 @@ const imageDimensions = {
 
 const initials = getInitials(author);
 
-let authorImage;
-try {
-	if (avatar) {
-		authorImage = await import(`../assets/authors/${avatar}`);
-	} else {
-		const imageName = author.toLowerCase().replace(/\s+/g, '-');
-		authorImage = await import(`../assets/authors/${imageName}.png`);
+const isExternalUrl = avatar && (avatar.startsWith('http') || avatar.startsWith('@http'));
+let externalAvatarUrl = null;
+let authorImage = null;
+
+if (isExternalUrl) {
+	externalAvatarUrl = avatar.startsWith('@') ? avatar.substring(1) : avatar;
+} else {
+	try {
+		if (avatar) {
+			authorImage = await import(/* @vite-ignore */ `../assets/authors/${avatar}`);
+		} else {
+			const imageName = author.toLowerCase().replace(/\s+/g, '-');
+			authorImage = await import(/* @vite-ignore */ `../assets/authors/${imageName}.png`);
+		}
+	} catch (error) {
+		authorImage = null;
 	}
-} catch (error) {
-	authorImage = null;
 }
 ---
 
 <div class={`${sizeClasses[size]} rounded-full overflow-hidden shadow-lg relative`}>
-	{authorImage ? (
+	{externalAvatarUrl ? (
+		<img 
+			src={externalAvatarUrl} 
+			alt={`${author} avatar`} 
+			class="w-full h-full object-cover"
+			width={imageDimensions[size].width}
+			height={imageDimensions[size].height}
+			loading="lazy"
+			referrerpolicy="no-referrer"
+		/>
+	) : authorImage ? (
 		<Image 
 			src={authorImage.default} 
 			alt={`${author} avatar`} 
