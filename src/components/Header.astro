@@ -19,16 +19,19 @@ import { SITE_TITLE } from '../consts';
 		<!-- Search and Mobile Menu -->
 		<div class="flex items-center gap-4">
 			<!-- Search Bar -->
-			<div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 min-w-[200px]">
+			<div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 min-w-[200px] relative">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
 					<circle cx="11" cy="11" r="8"/>
 					<path d="m21 21-4.35-4.35"/>
 				</svg>
 				<input 
+					id="search-input"
 					type="text" 
-					placeholder="Search" 
+					placeholder="Search posts..." 
 					class="bg-transparent text-gray-300 placeholder-gray-500 text-sm w-full outline-none"
 				/>
+				<!-- Search Results Dropdown -->
+				<div id="search-results" class="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-lg shadow-lg hidden max-h-80 overflow-y-auto"></div>
 			</div>
 			
 			<!-- Mobile Menu Button -->
@@ -152,6 +155,67 @@ import { SITE_TITLE } from '../consts';
 
   document.addEventListener('DOMContentLoaded', safeInitMobileMenu);
   document.addEventListener('astro:page-load', safeInitMobileMenu);
+
+  // Search functionality
+  async function initSearch() {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchResults = document.getElementById('search-results') as HTMLDivElement;
+    
+    if (!searchInput || !searchResults) return;
+    
+    let searchTimeout: number | null = null;
+    
+    async function performSearch(query: string) {
+      if (!query.trim()) {
+        searchResults.classList.add('hidden');
+        searchResults.innerHTML = '';
+        return;
+      }
+      
+      try {
+        // For now, we'll redirect to blog page with search query
+        // In a real implementation, you'd fetch and filter posts here
+        searchResults.innerHTML = `
+          <a href="/blog?search=${encodeURIComponent(query)}" class="block px-4 py-3 hover:bg-slate-800/50 transition-colors">
+            <div class="text-sm text-gray-300">Search for "${query}" in blog posts</div>
+            <div class="text-xs text-gray-500 mt-1">Press Enter to search</div>
+          </a>
+        `;
+        searchResults.classList.remove('hidden');
+      } catch (error) {
+        console.error('Search error:', error);
+      }
+    }
+    
+    searchInput.addEventListener('input', (e) => {
+      const query = (e.target as HTMLInputElement).value;
+      
+      if (searchTimeout !== null) {
+        clearTimeout(searchTimeout);
+      }
+      
+      searchTimeout = window.setTimeout(() => performSearch(query), 300);
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = (e.target as HTMLInputElement).value;
+        if (query.trim()) {
+          window.location.href = `/blog?search=${encodeURIComponent(query)}`;
+        }
+      }
+    });
+    
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target as Node) && !searchResults.contains(e.target as Node)) {
+        searchResults.classList.add('hidden');
+      }
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', initSearch);
+  document.addEventListener('astro:page-load', initSearch);
 </script>
 
 <style>
