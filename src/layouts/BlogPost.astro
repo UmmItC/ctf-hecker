@@ -23,16 +23,23 @@ if (author) {
 	}
 }
 ---
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth bg-gradient-to-br from-black to-[#51317e] min-h-screen">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
 			@reference "tailwindcss";
 			
-			/* Page load fade-in animation */
-			body {
-				opacity: 0;
-				animation: pageLoad 0.3s ease-out forwards;
+			/* Ensure backdrop blur works properly in Chromium browsers */
+			.backdrop-blur-2xl {
+				backdrop-filter: blur(32px);
+				-webkit-backdrop-filter: blur(32px);
+			}
+			
+			/* Ensure full height coverage */
+			html, body {
+				min-height: 100vh;
+				background: linear-gradient(135deg, #000000 0%, #51317e 100%);
+				background-attachment: fixed;
 			}
 			
 			@keyframes pageLoad {
@@ -46,16 +53,7 @@ if (author) {
 				}
 			}
 			
-			/* Staggered animations for blog post elements */
-			.blog-hero {
-				opacity: 0;
-				animation: slideInUp 0.3s ease-out 0.05s forwards;
-			}
-			
-			.blog-content {
-				opacity: 0;
-				animation: slideInUp 0.3s ease-out 0.1s forwards;
-			}
+
 			
 			@keyframes slideInUp {
 				0% { 
@@ -173,10 +171,10 @@ if (author) {
 			}
 		</style>
 	</head>
-	<body style="background: linear-gradient(135deg, #000000 0%, #51317e 100%); background-attachment: fixed;">
+	<body class="opacity-0 animate-[pageLoad_0.3s_ease-out_forwards] bg-gradient-to-br from-black to-[#51317e] bg-fixed min-h-screen">
 		<Header />
 		<main class="w-full max-w-4xl mx-auto px-4 py-8 min-h-[calc(100vh-120px)]">
-			<article class="blog-hero">
+			<article class="opacity-0 animate-[slideInUp_0.3s_ease-out_0.05s_forwards]">
 				<div class="text-center mb-12">
 					<!-- Author Display -->
 					{authors.length > 0 && (
@@ -215,7 +213,7 @@ if (author) {
 				</div>
 			</article>
 			
-			<div class="blog-content prose-content max-w-none">
+			<div class="opacity-0 animate-[slideInUp_0.3s_ease-out_0.1s_forwards] max-w-none prose-content">
 				<slot />
 			</div>
 		</main>

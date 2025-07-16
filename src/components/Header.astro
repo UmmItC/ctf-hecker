@@ -4,7 +4,7 @@ import { SITE_TITLE } from '../consts';
 ---
 
 <header id="header" class="sticky top-0 z-[1000] mt-8">
-	<div class="absolute opacity-0 inset-x-0 top-0 h-full backdrop-blur-2xl shadow-2xl transition-opacity duration-300" style="background: rgba(0, 0, 0, 0.1);"></div>
+	<div class="absolute opacity-0 inset-x-0 top-0 h-full backdrop-blur-2xl shadow-2xl transition-opacity duration-300 bg-black/10 supports-[backdrop-filter]:bg-black/10" style="backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);"></div>
 	<nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
 		<!-- Logo/Brand -->
 		<a href="/" class="flex items-center gap-2 hover:text-purple-400 transition-colors duration-200">
