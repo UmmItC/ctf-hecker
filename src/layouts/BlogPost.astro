@@ -29,7 +29,6 @@ if (author) {
 		<style>
 			@reference "tailwindcss";
 			
-			/* Fix scroll indicator colors and ensure proper background */
 			::-webkit-scrollbar {
 				width: 8px;
 			}
@@ -47,13 +46,11 @@ if (author) {
 				background: #a855f7;
 			}
 			
-			/* Ensure backdrop blur works properly in Chromium browsers */
 			.backdrop-blur-2xl {
 				backdrop-filter: blur(32px) !important;
 				-webkit-backdrop-filter: blur(32px) !important;
 			}
 			
-			/* Ensure full height coverage with fixed background */
 			html {
 				min-height: 100vh;
 				background: linear-gradient(135deg, #000000 0%, #51317e 100%) fixed;
@@ -76,8 +73,6 @@ if (author) {
 				}
 			}
 			
-
-			
 			@keyframes slideInUp {
 				0% { 
 					opacity: 0; 
@@ -89,7 +84,6 @@ if (author) {
 				}
 			}
 			
-			/* Custom cosmic theme styles for prose content */
 			.prose-content :global(h1) {
 				@apply text-3xl font-bold text-[#9082CE] mt-12 mb-6 pb-2 border-b-2 border-purple-400/30;
 				text-shadow: 0 0 20px rgba(144, 130, 206, 0.5);
@@ -165,16 +159,7 @@ if (author) {
 			}
 			
 			.prose-content :global(code) {
-				@apply bg-slate-800/80 text-purple-300 px-2 py-1 rounded text-sm border border-purple-500/30;
-			}
-			
-			.prose-content :global(pre) {
-				@apply bg-slate-900/90 border border-purple-500/30 rounded-xl p-6 overflow-x-auto my-6 backdrop-blur-sm;
-				box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
-			}
-			
-			.prose-content :global(pre code) {
-				@apply bg-transparent border-none p-0 text-purple-300;
+				@apply bg-gradient-to-r from-purple-900/30 to-purple-800/30 text-purple-300 px-2 py-1 rounded text-base font-mono;
 			}
 			
 			.prose-content :global(table) {
@@ -191,6 +176,24 @@ if (author) {
 			
 			.prose-content :global(hr) {
 				@apply my-8 border-purple-400/30;
+			}
+			
+			.prose-content :global(pre) {
+				@apply relative bg-[#1A1B26] border border-purple-500/30 rounded-xl my-6 p-0;
+				box-shadow: 0 0 20px rgba(168, 85, 247, 0.25);
+				overflow: hidden;
+			}
+
+			.prose-content :global(pre code) {
+				@apply block overflow-x-auto pl-16 pr-4 py-4 text-base;
+				font-family: 'Fira Code', monospace;
+				line-height: 1.6;
+			}
+
+			.prose-content :global(.line-numbers-wrapper) {
+				@apply absolute top-0 left-0 bottom-0 w-12 text-right pr-4 pt-4 text-gray-300 select-none text-base;
+				font-family: 'Fira Code', monospace;
+				line-height: 1.6;
 			}
 		</style>
 	</head>
@@ -241,5 +244,29 @@ if (author) {
 			</div>
 		</main>
 		<Footer />
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				document.querySelectorAll('.prose-content pre').forEach(preEl => {
+					const codeEl = preEl.querySelector('code');
+					if (!codeEl) return;
+
+					const codeText = codeEl.innerText;
+					const lines = (codeText.endsWith('\n') ? codeText.slice(0, -1) : codeText).split('\n');
+					const lineCount = lines.length;
+
+					const lineNumbersWrapper = document.createElement('div');
+					lineNumbersWrapper.className = 'line-numbers-wrapper';
+					lineNumbersWrapper.setAttribute('aria-hidden', 'true');
+
+					for (let i = 1; i <= lineCount; i++) {
+						const lineNumber = document.createElement('div');
+						lineNumber.textContent = i.toString();
+						lineNumbersWrapper.appendChild(lineNumber);
+					}
+
+					preEl.insertBefore(lineNumbersWrapper, codeEl);
+				});
+			});
+		</script>
 	</body>
 </html>
