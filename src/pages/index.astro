@@ -45,11 +45,26 @@ const normalizeAuthors = (author: any) => {
 				border: var(--b) solid transparent;
 				border-radius: 9999px;
 				background:
-					linear-gradient(rgba(18, 18, 28, 0.85), rgba(15, 23, 42, 0.95)) padding-box,
-					linear-gradient(to right, #9082CE, #9082CE, #9082CE) border-box;
+					linear-gradient(rgba(18, 18, 28, 0.9), rgba(15, 23, 42, 0.95)) padding-box,
+					linear-gradient(to right, #a855f7, #c084fc) border-box;
 				background-clip: padding-box, border-box;
 				background-origin: padding-box, border-box;
-				box-shadow: 0 0 12px rgba(229, 231, 235, 0.6);
+				box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+			}
+
+			.terminal-cursor {
+				padding-bottom: 1px;
+				border-bottom: 2px solid transparent;
+				animation: blink 1.2s step-end infinite;
+			}
+
+			@keyframes blink {
+				from, to {
+					border-bottom-color: transparent;
+				}
+				50% {
+					border-bottom-color: #e5e7eb;
+				}
 			}
 
 			.fade-in {
@@ -130,7 +145,7 @@ const normalizeAuthors = (author: any) => {
 				<div class="flex items-center justify-center gap-2 mt-4 mb-6">
 					<div class="glow-border px-6 py-3">
 						<span class="text-sm text-gray-200 font-mono">
-							<span id="post-count" class="text-gray-200 font-extrabold">0</span>
+							<span id="post-count" class="text-gray-200 font-extrabold">{posts.length}</span>
 							{posts.length === 1 ? 'article' : 'articles'} You wrote :D
 						</span>
 					</div>
@@ -387,16 +402,24 @@ const normalizeAuthors = (author: any) => {
 			const countElement = document.getElementById('post-count');
 			if (countElement) {
 				const finalCount = posts.length;
+				const addCursor = () => countElement.classList.add('terminal-cursor');
+
 				if (finalCount > 0) {
 					let currentCount = 0;
+					countElement.textContent = '0';
 					const updateCount = () => {
 						if (currentCount < finalCount) {
 							currentCount++;
 							countElement.textContent = currentCount;
 							setTimeout(updateCount, 100);
+						} else {
+							addCursor();
 						}
 					};
 					setTimeout(updateCount, 300);
+				} else {
+					countElement.textContent = '0';
+					addCursor();
 				}
 			}
 		</script>
