@@ -130,7 +130,7 @@ const normalizeAuthors = (author: any) => {
 				<div class="flex items-center justify-center gap-2 mt-4 mb-6">
 					<div class="glow-border px-6 py-3">
 						<span class="text-sm text-gray-200 font-mono">
-							<span class="text-gray-200 font-extrabold">{posts.length}</span>
+							<span id="post-count" class="text-gray-200 font-extrabold">0</span>
 							{posts.length === 1 ? 'article' : 'articles'} You wrote :D
 						</span>
 					</div>
@@ -382,6 +382,23 @@ const normalizeAuthors = (author: any) => {
 					}
 				}, 100);
 			}, { passive: true });
+
+			// Typing effect for post count
+			const countElement = document.getElementById('post-count');
+			if (countElement) {
+				const finalCount = posts.length;
+				if (finalCount > 0) {
+					let currentCount = 0;
+					const updateCount = () => {
+						if (currentCount < finalCount) {
+							currentCount++;
+							countElement.textContent = currentCount;
+							setTimeout(updateCount, 100);
+						}
+					};
+					setTimeout(updateCount, 300);
+				}
+			}
 		</script>
 	</body>
 </html>
