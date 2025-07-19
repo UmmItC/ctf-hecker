@@ -147,6 +147,7 @@ const normalizeAuthors = (author: any) => {
 						<span class="text-sm text-gray-200 font-mono">
 							<span id="post-count" class="text-gray-200 font-extrabold">{posts.length}</span>
 							{posts.length === 1 ? 'article' : 'articles'} You wrote :D
+							<span id="status-message" class="ml-2 text-gray-400 italic"></span>
 						</span>
 					</div>
 				</div>
@@ -400,9 +401,33 @@ const normalizeAuthors = (author: any) => {
 
 			// Typing effect for post count
 			const countElement = document.getElementById('post-count');
-			if (countElement) {
+			const statusMessageElement = document.getElementById('status-message');
+
+			if (countElement && statusMessageElement) {
 				const finalCount = posts.length;
 				const addCursor = () => countElement.classList.add('terminal-cursor');
+
+				const setStatusMessage = () => {
+					let message = '';
+					if (finalCount > 1000) {
+						message = '... Blogging is a lifestyle right?';
+					} else if (finalCount > 500) {
+						message = '... A true legend of the craft!';
+					} else if (finalCount > 200) {
+						message = '... An unstoppable force of knowledge!';
+					} else if (finalCount > 100) {
+						message = '... Wow, a true knowledge base!';
+					} else if (finalCount > 50) {
+						message = '... You\'re a seasoned blogger now!';
+					} else if (finalCount > 20) {
+						message = '... Building some serious momentum!';
+					} else if (finalCount > 5) {
+						message = '... Great start, keep it up!';
+					} else {
+						message = '... Blogger journey begins!';
+					}
+					statusMessageElement.textContent = message;
+				};
 
 				if (finalCount > 0) {
 					let currentCount = 0;
@@ -414,12 +439,14 @@ const normalizeAuthors = (author: any) => {
 							setTimeout(updateCount, 100);
 						} else {
 							addCursor();
+							setStatusMessage();
 						}
 					};
 					setTimeout(updateCount, 300);
 				} else {
 					countElement.textContent = '0';
 					addCursor();
+					setStatusMessage();
 				}
 			}
 		</script>
