@@ -144,11 +144,13 @@ const normalizeAuthors = (author: any) => {
 				</p>
 				<div class="flex items-center justify-center gap-2 mt-4 mb-6">
 					<div class="glow-border px-6 py-3">
-						<span class="text-sm text-gray-200 font-mono">
-							<span id="post-count" class="text-gray-200 font-extrabold">{posts.length}</span>
-							{posts.length === 1 ? 'article' : 'articles'} You wrote :D
-							<span id="status-message" class="ml-2 text-gray-400 italic"></span>
-						</span>
+						<div class="flex flex-wrap justify-center items-center gap-x-2 text-sm text-gray-200 font-mono">
+							<span>
+								<span id="post-count" class="text-gray-200 font-extrabold">{posts.length}</span>
+								{posts.length === 1 ? 'article' : 'articles'} You wrote :D
+							</span>
+							<span id="status-message" class="text-gray-400 italic"></span>
+						</div>
 					</div>
 				</div>
 				<div class="w-24 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 mx-auto rounded-full"></div>
