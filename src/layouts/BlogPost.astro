@@ -195,6 +195,15 @@ if (author) {
 				font-family: 'Fira Code', monospace;
 				line-height: 1.6;
 			}
+
+			.prose-content :global(.copy-button) {
+				@apply absolute top-3 right-3 bg-slate-800/50 text-gray-300 hover:bg-purple-600/70 hover:text-white p-2 rounded-lg transition-colors duration-200 z-5;
+			}
+
+			.prose-content :global(.copy-button[data-copied]) {
+				@apply bg-purple-600/80 text-white;
+			}
+			
 		</style>
 	</head>
 	<body class="opacity-0 animate-[pageLoad_0.3s_ease-out_forwards] min-h-screen">
@@ -250,6 +259,7 @@ if (author) {
 					const codeEl = preEl.querySelector('code');
 					if (!codeEl) return;
 
+					// Line Numbers
 					const codeText = codeEl.innerText;
 					const lines = (codeText.endsWith('\n') ? codeText.slice(0, -1) : codeText).split('\n');
 					const lineCount = lines.length;
@@ -263,8 +273,24 @@ if (author) {
 						lineNumber.textContent = i.toString();
 						lineNumbersWrapper.appendChild(lineNumber);
 					}
-
 					preEl.insertBefore(lineNumbersWrapper, codeEl);
+
+					const copyButton = document.createElement('button');
+					copyButton.className = 'copy-button';
+					copyButton.title = 'Copy code';
+					copyButton.innerHTML = `<iconify-icon icon="mdi:content-copy"></iconify-icon>`;
+
+					copyButton.addEventListener('click', () => {
+						navigator.clipboard.writeText(codeText).then(() => {
+							copyButton.innerHTML = `<iconify-icon icon="mdi:check"></iconify-icon>`;
+							copyButton.dataset.copied = 'true';
+							setTimeout(() => {
+								copyButton.innerHTML = `<iconify-icon icon="mdi:content-copy"></iconify-icon>`;
+								delete copyButton.dataset.copied;
+							}, 2000);
+						});
+					});
+					preEl.appendChild(copyButton);
 				});
 			});
 		</script>
