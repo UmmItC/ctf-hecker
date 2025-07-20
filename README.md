@@ -1,6 +1,6 @@
 # Purple
 
-A theme that for hacker and people thing purple is good
+A theme that for hacker and people think purple are beautiful :D
 
 ## Usage
 
