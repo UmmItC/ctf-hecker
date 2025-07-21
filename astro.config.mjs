@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://ctf-hecker.vercel.app',
+	site: 'https://astro-purple.vercel.app',
 	integrations: [mdx(), sitemap()],
 	vite: {
 		plugins: [tailwindcss()],
