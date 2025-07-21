@@ -255,8 +255,9 @@ if (author) {
 		</main>
 		<Footer />
 		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				document.querySelectorAll('.prose-content pre').forEach(preEl => {
+			function initializeCodeBlocks() {
+				document.querySelectorAll('.prose-content pre:not([data-processed])').forEach(preEl => {
+					preEl.setAttribute('data-processed', 'true');
 					const codeEl = preEl.querySelector('code');
 					if (!codeEl) return;
 
@@ -293,7 +294,9 @@ if (author) {
 					});
 					preEl.appendChild(copyButton);
 				});
-			});
+			}
+
+			document.addEventListener('astro:page-load', initializeCodeBlocks);
 		</script>
 	</body>
 </html>
