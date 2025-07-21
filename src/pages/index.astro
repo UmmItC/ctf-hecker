@@ -234,229 +234,248 @@ const normalizeAuthors = (author: any) => {
 		<Footer />
 
 		<script define:vars={{ posts: posts, POSTS_PER_PAGE }}>
-			let currentPage = 1;
-			let isLoading = false;
-			
-			const loadMoreBtn = document.getElementById('load-more-btn');
-			const loadMoreText = document.getElementById('load-more-text');
-			const loadingSpinner = document.getElementById('loading-spinner');
-			const loadMoreIcon = document.getElementById('load-more-icon');
-			const postsContainer = document.getElementById('posts-container');
+			function initHomePage() {
+				if (document.body.dataset.homeInitialized) return;
+				document.body.dataset.homeInitialized = 'true';
 
-			function formatDate(date) {
-				return new Date(date).toLocaleDateString('en-US', {
-					year: 'numeric',
-					month: 'short',
-					day: 'numeric'
-				});
-			}
+				let currentPage = 1;
+				let isLoading = false;
+				
+				const loadMoreBtn = document.getElementById('load-more-btn');
+				const loadMoreText = document.getElementById('load-more-text');
+				const loadingSpinner = document.getElementById('loading-spinner');
+				const loadMoreIcon = document.getElementById('load-more-icon');
+				const postsContainer = document.getElementById('posts-container');
 
-			function createPostCard(post, index) {
-				const isFirst = index === 0;
-				
-				const normalizeAuthors = (author) => {
-					if (!author) return [];
-					if (typeof author === 'string') return [{ name: author, avatar: undefined }];
-					if (Array.isArray(author)) {
-						return author.map(a => typeof a === 'string' ? { name: a, avatar: undefined } : a);
-					}
-					return [];
-				};
-				
-				const createAuthorHTML = (authors) => {
-					if (!authors.length) return '';
-					return `
-						<div class="flex items-center gap-2 mb-3">
-							${authors.map(authorObj => `
-								<div class="flex items-center gap-1.5">
-									<div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-xs">
-										<span>${authorObj.name.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0, 2).join('')}</span>
-									</div>
-									<span class="text-xs text-gray-300 font-medium">${authorObj.name}</span>
-								</div>
-							`).join('')}
-						</div>
-					`;
-				};
-				
-				const authors = normalizeAuthors(post.data.author);
-				
-				return `
-					<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
-						<a href="/blog/${post.id}/" class="block">
+				if (!postsContainer) {
+					delete document.body.dataset.homeInitialized;
+					return;
+				}
 
-							
-							<div class="p-6">
-								<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
-									<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-									</svg>
-									<span>${formatDate(post.data.pubDate)}</span>
-									<span class="text-gray-500">•</span>
-									<span class="text-gray-500">3 min read</span>
-								</div>
-								
-								${createAuthorHTML(authors)}
-								
-								<h2 class="font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight text-xl">
-									${post.data.title}
-								</h2>
-								
-								${post.data.description ? `
-									<p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
-										${post.data.description}
-									</p>
-								` : ''}
-								
-								<div class="flex items-center justify-end">
-									<span class="text-pink-400 text-sm font-medium group-hover:text-purple-400 transition-colors duration-300">
-										Read more →
-									</span>
-								</div>
-							</div>
-							
-							<!-- Hover glow effect -->
-							<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-						</a>
-					</article>
-				`;
-			}
-
-			function loadMorePosts() {
-				if (isLoading) return;
-				
-				isLoading = true;
-				loadMoreBtn.disabled = true;
-				loadMoreText.textContent = 'Loading...';
-				loadingSpinner.classList.remove('hidden');
-				loadMoreIcon.classList.add('hidden');
-
-				setTimeout(() => {
-					const startIndex = currentPage * POSTS_PER_PAGE;
-					const endIndex = startIndex + POSTS_PER_PAGE;
-					const newPosts = posts.slice(startIndex, endIndex);
-					
-					newPosts.forEach((post, index) => {
-						const postCard = createPostCard(post, startIndex + index);
-						postsContainer.insertAdjacentHTML('beforeend', postCard);
+				function formatDate(date) {
+					return new Date(date).toLocaleDateString('en-US', {
+						year: 'numeric',
+						month: 'short',
+						day: 'numeric'
 					});
+				}
 
-					currentPage++;
-					isLoading = false;
-					loadMoreBtn.disabled = false;
-					loadMoreText.textContent = 'Load More Posts';
-					loadingSpinner.classList.add('hidden');
-					loadMoreIcon.classList.remove('hidden');
+				function createPostCard(post, index) {
+					const isFirst = index === 0;
+					
+					const normalizeAuthors = (author) => {
+						if (!author) return [];
+						if (typeof author === 'string') return [{ name: author, avatar: undefined }];
+						if (Array.isArray(author)) {
+							return author.map(a => typeof a === 'string' ? { name: a, avatar: undefined } : a);
+						}
+						return [];
+					};
+					
+					const createAuthorHTML = (authors) => {
+						if (!authors.length) return '';
+						return `
+							<div class="flex items-center gap-2 mb-3">
+								${authors.map(authorObj => `
+									<div class="flex items-center gap-1.5">
+										<div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-xs">
+											<span>${authorObj.name.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0, 2).join('')}</span>
+										</div>
+										<span class="text-xs text-gray-300 font-medium">${authorObj.name}</span>
+									</div>
+								`).join('')}
+							</div>
+						`;
+					};
+					
+					const authors = normalizeAuthors(post.data.author);
+					
+					return `
+						<article class="post-card group relative overflow-hidden rounded-2xl bg-slate-900/60 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:bg-slate-900/80 hover:transform hover:scale-105 fade-in">
+							<a href="/blog/${post.id}/" class="block">
 
-					// Hide button if no more posts
-					if (endIndex >= posts.length) {
-						loadMoreBtn.style.display = 'none';
-					}
-				}, 800);
-			}
+								
+								<div class="p-6">
+									<div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
+										<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+										</svg>
+										<span>${formatDate(post.data.pubDate)}</span>
+										<span class="text-gray-500">•</span>
+										<span class="text-gray-500">3 min read</span>
+									</div>
+									
+									${createAuthorHTML(authors)}
+									
+									<h2 class="font-bold text-gray-100 mb-3 group-hover:text-[#9082CE] transition-colors duration-300 leading-tight text-xl">
+										${post.data.title}
+									</h2>
+									
+									${post.data.description ? `
+										<p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
+											${post.data.description}
+										</p>
+									` : ''}
+									
+									<div class="flex items-center justify-end">
+										<span class="text-pink-400 text-sm font-medium group-hover:text-purple-400 transition-colors duration-300">
+											Read more →
+										</span>
+									</div>
+								</div>
+								
+								<!-- Hover glow effect -->
+								<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+							</a>
+						</article>
+					`;
+				}
 
-			if (loadMoreBtn) {
-				// Primary click handler
-				loadMoreBtn.addEventListener('click', function(event) {
-					event.preventDefault();
-					event.stopPropagation();
-					loadMorePosts();
-				});
+				function loadMorePosts() {
+					if (isLoading) return;
+					
+					isLoading = true;
+					loadMoreBtn.disabled = true;
+					loadMoreText.textContent = 'Loading...';
+					loadingSpinner.classList.remove('hidden');
+					loadMoreIcon.classList.add('hidden');
 
-				// Keyboard accessibility (Enter and Space)
-				loadMoreBtn.addEventListener('keydown', function(event) {
-					if (event.key === 'Enter' || event.key === ' ') {
+					setTimeout(() => {
+						const startIndex = currentPage * POSTS_PER_PAGE;
+						const endIndex = startIndex + POSTS_PER_PAGE;
+						const newPosts = posts.slice(startIndex, endIndex);
+						
+						newPosts.forEach((post, index) => {
+							const postCard = createPostCard(post, startIndex + index);
+							postsContainer.insertAdjacentHTML('beforeend', postCard);
+						});
+
+						currentPage++;
+						isLoading = false;
+						loadMoreBtn.disabled = false;
+						loadMoreText.textContent = 'Load More Posts';
+						loadingSpinner.classList.add('hidden');
+						loadMoreIcon.classList.remove('hidden');
+
+						if (endIndex >= posts.length) {
+							loadMoreBtn.style.display = 'none';
+						}
+					}, 800);
+				}
+
+				if (loadMoreBtn) {
+					loadMoreBtn.addEventListener('click', function(event) {
 						event.preventDefault();
 						event.stopPropagation();
 						loadMorePosts();
-					}
-				});
+					});
 
-				// Touch support for mobile
-				loadMoreBtn.addEventListener('touchstart', function(event) {
-					event.preventDefault();
-				});
-
-				loadMoreBtn.addEventListener('touchend', function(event) {
-					event.preventDefault();
-					event.stopPropagation();
-					loadMorePosts();
-				});
-			}
-
-			let scrollTimeout;
-			window.addEventListener('scroll', function() {
-				clearTimeout(scrollTimeout);
-				scrollTimeout = setTimeout(function() {
-					if (isLoading) return;
-					
-					try {
-						const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-						if (scrollTop + clientHeight >= scrollHeight - 800) {
+					loadMoreBtn.addEventListener('keydown', function(event) {
+						if (event.key === 'Enter' || event.key === ' ') {
+							event.preventDefault();
+							event.stopPropagation();
 							loadMorePosts();
 						}
-					} catch (error) {
-						console.warn('Scroll handler error:', error);
-					}
-				}, 100);
-			}, { passive: true });
+					});
 
-			// Typing effect for post count
-			const countElement = document.getElementById('post-count');
-			const statusMessageElement = document.getElementById('status-message');
+					// Touch support for mobile
+					loadMoreBtn.addEventListener('touchstart', function(event) {
+						event.preventDefault();
+					});
 
-			if (countElement && statusMessageElement) {
-				const finalCount = posts.length;
-				const addCursor = () => countElement.classList.add('terminal-cursor');
+					loadMoreBtn.addEventListener('touchend', function(event) {
+						event.preventDefault();
+						event.stopPropagation();
+						loadMorePosts();
+					});
+				}
 
-				const setStatusMessage = () => {
-					let message = '';
-					if (finalCount > 1000) {
-						message = '... Blogging is a lifestyle right?';
-					} else if (finalCount > 500) {
-						message = '... A true legend of the craft!';
-					} else if (finalCount > 200) {
-						message = '... An unstoppable force of knowledge!';
-					} else if (finalCount > 100) {
-						message = '... Wow, a true knowledge base!';
-					} else if (finalCount > 50) {
-						message = '... You\'re a seasoned blogger now!';
-					} else if (finalCount > 20) {
-						message = '... Building some serious momentum!';
-					} else if (finalCount > 5) {
-						message = '... Great start, keep it up!';
-					} else if (finalCount > 0) {
-						message = '... Blogger journey begins!';
-					} else {
-						message = '';
-					}
-					statusMessageElement.textContent = message;
-					if (message === '') {
-						const parent = statusMessageElement.parentElement;
-						if (parent) parent.style.minHeight = 'auto'; // Adjust height
-					}
+				let scrollTimeout;
+				const scrollHandler = function() {
+					clearTimeout(scrollTimeout);
+					scrollTimeout = setTimeout(function() {
+						if (isLoading) return;
+						
+						try {
+							const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+							if (scrollTop + clientHeight >= scrollHeight - 800) {
+								if (loadMoreBtn && loadMoreBtn.style.display !== 'none') {
+									loadMorePosts();
+								}
+							}
+						} catch (error) {
+							console.warn('Scroll handler error:', error);
+						}
+					}, 100);
 				};
+				window.addEventListener('scroll', scrollHandler, { passive: true });
 
-				if (finalCount > 0) {
-					let currentCount = 0;
-					countElement.textContent = '0';
-					const updateCount = () => {
-						if (currentCount < finalCount) {
-							currentCount++;
-							countElement.textContent = currentCount;
-							setTimeout(updateCount, 100);
+				// Typing effect for post count
+				const countElement = document.getElementById('post-count');
+				const statusMessageElement = document.getElementById('status-message');
+
+				if (countElement && statusMessageElement) {
+					const finalCount = posts.length;
+					countElement.classList.remove('terminal-cursor');
+					const addCursor = () => countElement.classList.add('terminal-cursor');
+
+					const setStatusMessage = () => {
+						let message = '';
+						if (finalCount > 1000) {
+							message = '... Blogging is a lifestyle right?';
+						} else if (finalCount > 500) {
+							message = '... A true legend of the craft!';
+						} else if (finalCount > 200) {
+							message = '... An unstoppable force of knowledge!';
+						} else if (finalCount > 100) {
+							message = '... Wow, a true knowledge base!';
+						} else if (finalCount > 50) {
+							message = '... You\'re a seasoned blogger now!';
+						} else if (finalCount > 20) {
+							message = '... Building some serious momentum!';
+						} else if (finalCount > 5) {
+							message = '... Great start, keep it up!';
+						} else if (finalCount > 0) {
+							message = '... Blogger journey begins!';
 						} else {
-							addCursor();
-							setStatusMessage();
+							message = '';
+						}
+						statusMessageElement.textContent = message;
+						if (message === '') {
+							const parent = statusMessageElement.parentElement;
+							if (parent) parent.style.minHeight = 'auto'; // Adjust height
 						}
 					};
-					setTimeout(updateCount, 300);
-				} else {
-					countElement.textContent = '0';
-					addCursor();
-					setStatusMessage();
+
+					if (finalCount > 0) {
+						let currentCount = 0;
+						countElement.textContent = '0';
+						const updateCount = () => {
+							if (currentCount < finalCount) {
+								currentCount++;
+								countElement.textContent = currentCount;
+								setTimeout(updateCount, 100);
+							} else {
+								addCursor();
+								setStatusMessage();
+							}
+						};
+						setTimeout(updateCount, 300);
+					} else {
+						countElement.textContent = '0';
+						addCursor();
+						setStatusMessage();
+					}
 				}
+
+				// Cleanup listeners when navigating away
+				document.addEventListener('astro:before-swap', () => {
+					window.removeEventListener('scroll', scrollHandler);
+					delete document.body.dataset.homeInitialized;
+				}, { once: true });
 			}
+			
+			document.addEventListener('astro:page-load', initHomePage);
 		</script>
 	</body>
 </html>
