@@ -16,7 +16,11 @@
 		const minutes = Math.floor((uptime % (1000 * 60 * 60)) / (1000 * 60));
 		const seconds = Math.floor((uptime % (1000 * 60)) / 1000);
 		
-		uptimeText = `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+		const paddedHours = hours.toString().padStart(2, '0');
+		const paddedMinutes = minutes.toString().padStart(2, '0');
+		const paddedSeconds = seconds.toString().padStart(2, '0');
+
+		uptimeText = `${days}d ${paddedHours}h ${paddedMinutes}m ${paddedSeconds}s`;
 	}
 
 	onMount(() => {
