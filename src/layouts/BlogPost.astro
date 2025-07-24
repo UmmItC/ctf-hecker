@@ -186,20 +186,27 @@ if (author) {
 				overflow: hidden;
 			}
 
+			.prose-content :global(.code-container) {
+				@apply flex items-stretch;
+			}
+
 			.prose-content :global(pre code) {
-				@apply block overflow-x-auto pl-16 pr-4 py-4 text-base;
+				@apply block overflow-x-auto pr-4 py-4 text-base flex-1;
 				font-family: 'Fira Code', monospace;
 				line-height: 1.6;
+				background-color: #221032; /* Ensure it has a background */
 			}
 
 			.prose-content :global(.line-numbers-wrapper) {
-				@apply absolute top-0 left-0 bottom-0 w-12 text-right pr-4 pt-4 text-gray-300 select-none text-base;
+				@apply w-12 shrink-0 text-right pr-4 pt-4 text-white select-none text-base;
 				font-family: 'Fira Code', monospace;
 				line-height: 1.6;
+				background-color: #442560; /* Different background for distinction */
+				border-right: 1px solid rgba(168, 85, 247, 0.2);
 			}
 
 			.prose-content :global(.copy-button) {
-				@apply absolute top-3 right-3 bg-slate-800/50 text-gray-300 hover:bg-purple-600/70 hover:text-white p-2 rounded-lg transition-colors duration-200 z-5;
+				@apply absolute top-3 right-3 bg-slate-800/50 text-gray-300 hover:bg-purple-600/70 hover:text-white p-2 rounded-lg transition-colors duration-200 z-10;
 			}
 
 			.prose-content :global(.copy-button[data-copied]) {

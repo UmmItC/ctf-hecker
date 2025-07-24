@@ -23,7 +23,12 @@
 				lineNumber.textContent = i.toString();
 				lineNumbersWrapper.appendChild(lineNumber);
 			}
-			preEl.insertBefore(lineNumbersWrapper, codeEl);
+
+			const container = document.createElement('div');
+			container.className = 'code-container';
+			container.appendChild(codeEl);
+			container.insertBefore(lineNumbersWrapper, codeEl);
+			preEl.appendChild(container);
 
 			// --- Copy Button ---
 			const copyButton = document.createElement('button');
@@ -41,7 +46,7 @@
 					}, 2000);
 				});
 			});
-			preEl.appendChild(copyButton);
+			preEl.insertBefore(copyButton, preEl.firstChild);
 		});
 	}
 
