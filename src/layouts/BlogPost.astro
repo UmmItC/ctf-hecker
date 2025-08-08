@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { ClientRouter } from 'astro:transitions';
 import FormattedDate from '../components/FormattedDate.astro';
 import AuthorAvatar from '../components/AuthorAvatar.astro';
 import { SITE_TITLE } from '../consts';
@@ -243,5 +244,6 @@ if (author) {
 
         <!-- Code Block -->
         <CodeBlock client:only="svelte" />
+		<ClientRouter />
 	</body>
 </html>

@@ -3,7 +3,7 @@ import HeaderLink from './HeaderLink.astro';
 
 ---
 
-<header id="header" class="sticky top-0 z-[1000] mt-8">
+<header id="header" transition:persist class="sticky top-0 z-[1000] mt-8">
 	<div class="absolute opacity-0 inset-x-0 top-0 h-full shadow-2xl transition-opacity duration-300 bg-black/20" style="backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); will-change: opacity;"></div>
 	<nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
 		<!-- Logo/Brand -->

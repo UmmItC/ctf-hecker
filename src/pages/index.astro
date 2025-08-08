@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { ClientRouter } from 'astro:transitions';
 import AuthorAvatar from '../components/AuthorAvatar.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
@@ -487,5 +488,6 @@ const normalizeAuthors = (author: any) => {
 					document.addEventListener('astro:page-load', initHomePage);
 					document.addEventListener('DOMContentLoaded', initHomePage);
 		</script>
+		<ClientRouter />
 	</body>
 </html>
