@@ -17,6 +17,16 @@ const POSTS_PER_PAGE = 6;
 const initialPosts = posts.slice(0, POSTS_PER_PAGE);
 const hasMore = posts.length > POSTS_PER_PAGE;
 
+const litePosts = posts.map((p) => ({
+    id: p.id,
+    data: {
+        title: p.data.title,
+        description: p.data.description,
+        pubDate: p.data.pubDate,
+        author: p.data.author,
+    }
+}));
+
 const normalizeAuthors = (author: any) => {
 	if (!author) return [];
 	if (typeof author === 'string') return [{ name: author, avatar: undefined }];
@@ -31,8 +41,7 @@ const normalizeAuthors = (author: any) => {
 <html lang="en" class="scroll-smooth">
 	<head>
 		<BaseHead title={`${SITE_TITLE} - The Blog where you write your thoughts`} description={SITE_DESCRIPTION} />
-		<style>
-			@import url('https://fonts.googleapis.com/css2?family=Playwrite+IS&display=swap');
+        <style>
 			@reference "tailwindcss";
 
 			@keyframes spin {
@@ -133,7 +142,7 @@ const normalizeAuthors = (author: any) => {
 		
 		<!-- Removed grid overlay div for pure background -->
 		<Header />
-		<main class="w-full max-w-6xl mx-auto px-4 py-8 relative z-[2] min-h-[calc(100vh-120px)]">
+		<main transition:animate="slide" class="w-full max-w-6xl mx-auto px-4 py-8 relative z-[2] min-h-[calc(100vh-120px)]">
 			<!-- Page Header -->
 			<section class="page-header text-center py-16 mb-12">
 				<h1 class="text-5xl font-extrabold mb-4 text-[#9082CE]">
@@ -233,7 +242,7 @@ const normalizeAuthors = (author: any) => {
 		</main>
 		<Footer />
 
-		<script define:vars={{ posts: posts, POSTS_PER_PAGE }}>
+		<script define:vars={{ posts: litePosts, POSTS_PER_PAGE }}>
 			function initHomePage() {
 				if (document.body.dataset.homeInitialized) return;
 				document.body.dataset.homeInitialized = 'true';
@@ -475,7 +484,8 @@ const normalizeAuthors = (author: any) => {
 				}, { once: true });
 			}
 			
-			document.addEventListener('astro:page-load', initHomePage);
+					document.addEventListener('astro:page-load', initHomePage);
+					document.addEventListener('DOMContentLoaded', initHomePage);
 		</script>
 	</body>
 </html>

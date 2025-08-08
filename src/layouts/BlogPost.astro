@@ -7,7 +7,6 @@ import FormattedDate from '../components/FormattedDate.astro';
 import AuthorAvatar from '../components/AuthorAvatar.astro';
 import { SITE_TITLE } from '../consts';
 import CodeBlock from '../components/svelte/Footer/utils/CodeBlock.svelte';
-import { ClientRouter } from "astro:transitions";
 
 type Props = CollectionEntry<'blog'>['data'];
 
@@ -54,11 +53,11 @@ if (author) {
 				-webkit-backdrop-filter: blur(32px) !important;
 			}
 			
-			html {
-				min-height: 100vh;
-				background: linear-gradient(135deg, #000000 0%, #51317e 100%) fixed;
-				background-attachment: fixed;
-			}
+            html {
+                min-height: 100vh;
+                background: linear-gradient(135deg, #000000 0%, #51317e 100%) fixed;
+                background-attachment: fixed;
+            }
 			
 			body {
 				min-height: 100vh;
@@ -196,7 +195,7 @@ if (author) {
 	</head>
 	<body class="min-h-screen">
 		<Header />
-		<main transition:animate="slide" class="w-full max-w-4xl mx-auto px-4 py-8 min-h-[calc(100vh-120px)]">
+        <main transition:animate="slide" class="w-full max-w-4xl mx-auto px-4 py-8 min-h-[calc(100vh-120px)]">
 			<article>
 				<div class="text-center mb-12">
 					<!-- Author Display -->
@@ -242,7 +241,7 @@ if (author) {
 		</main>
 		<Footer />
 
-		<!-- Code Block -->
-		<CodeBlock client:only="svelte" />
+        <!-- Code Block -->
+        <CodeBlock client:only="svelte" />
 	</body>
 </html>
